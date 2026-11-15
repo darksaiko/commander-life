@@ -211,10 +211,11 @@
   /* ---------- settings panel (hold the C button) ---------- */
   :root { --sh-bg:#0b0818; --sh-ink:#ffd7a6; --sh-line:rgba(255,215,166,.85); --sh-acc:#c874ff;
           --sh-sep:rgba(255,215,166,.18); --sh-glow:rgba(200,116,255,.3); --sh-r:18px; color-scheme:dark; }
-  #settings, #history { position:fixed; inset:0; z-index:30; display:none; align-items:center; justify-content:center;
+  #settings, #history, #confirm { position:fixed; inset:0; z-index:30; display:none; align-items:center; justify-content:center;
     padding:12px; background:rgba(0,0,0,.5); }
-  #settings.open, #history.open { display:flex; }
-  #settings .sheet, #history .sheet { width:min(92vw,330px); max-height:94dvh; overflow:auto; padding:10px 16px 6px;
+  #settings.open, #history.open, #confirm.open { display:flex; }
+  #confirm { z-index:40; }
+  #settings .sheet, #history .sheet, #confirm .sheet { width:min(92vw,330px); max-height:94dvh; overflow:auto; padding:10px 16px 6px;
     border-radius:var(--sh-r); background:var(--sh-bg); color:var(--sh-ink); border:1.5px solid var(--sh-line);
     box-shadow:0 10px 40px rgba(0,0,0,.6), 0 0 24px var(--sh-glow); font:500 15px/1.2 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; }
   .sh-head { display:flex; align-items:center; justify-content:space-between; min-height:40px; }
@@ -232,8 +233,17 @@
   .panel.empty > * { display:none !important; }
   .panel.empty::after { content:"EMPTY SEAT"; opacity:1 !important; box-shadow:none !important; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font:700 12px/1 system-ui,sans-serif; letter-spacing:.3em; color:rgba(255,255,255,.28); text-indent:.3em; }
   .panel.empty.flip::after { transform:rotate(180deg); }
-  #playersAsk[hidden] { display:none; }
-  #playersAsk .seg button { padding:0 12px; white-space:nowrap; }
+  #confirm .sheet { width:min(86vw,300px); padding:18px 16px 14px; text-align:center; }
+  #askTxt { font-weight:700; font-size:17px; line-height:1.3; }
+  #askSub { margin-top:6px; font-size:13px; opacity:.7; }
+  .cf-btns { display:flex; gap:10px; margin-top:16px; }
+  .cf-btns button { flex:1; height:42px; border-radius:999px; border:1.5px solid var(--sh-line); background:transparent; color:var(--sh-ink); font:inherit; font-weight:700; }
+  #askYes { background:var(--sh-acc); border-color:var(--sh-acc); color:var(--sh-bg, #000); }
+  html[data-theme="pixel"] .cf-btns button { border-radius:0; border-width:2px; }
+  /* the toggles never get squeezed: the row label wraps instead */
+  .seg { flex:none; }
+  .seg button { flex:none; }
+  html[data-theme="pixel"] .seg button { font-size:13px; padding:0 9px; }
   .seat.none { visibility:hidden; }
   .switch { position:relative; width:54px; height:30px; padding:0; border-radius:999px; border:1.5px solid var(--sh-line);
     background:transparent; transition:background .2s; }
@@ -327,7 +337,7 @@
   html[data-theme="pixel"] #reset .ring { display:none; }
   html[data-theme="pixel"] #hint { border-radius:0; background:#000; color:#fff; border:2px solid #fff; box-shadow:none;
     font-family:ui-monospace,Menlo,Consolas,monospace; text-transform:uppercase; }
-  html[data-theme="pixel"] #settings .sheet, html[data-theme="pixel"] #history .sheet { border-width:3px; font-family:ui-monospace,Menlo,Consolas,monospace; text-transform:uppercase; }
+  html[data-theme="pixel"] #settings .sheet, html[data-theme="pixel"] #history .sheet, html[data-theme="pixel"] #confirm .sheet { border-width:3px; font-family:ui-monospace,Menlo,Consolas,monospace; text-transform:uppercase; }
   html[data-theme="pixel"] #closeSet, html[data-theme="pixel"] #closeHist, html[data-theme="pixel"] .hbtn, html[data-theme="pixel"] .switch, html[data-theme="pixel"] .switch i, html[data-theme="pixel"] #themeSel { border-radius:0; }
 
   /* ---- theme size tweaks: serif and pixel digits are wider than the Luma font, so a few small cells need smaller text ---- */
@@ -520,8 +530,8 @@
   html[data-theme="forest"] .delta.up   { color:#b8ffd8; text-shadow:0 0 12px rgba(80,230,170,.85), 0 0 24px rgba(47,191,134,.5); }
   html[data-theme="forest"] .delta.down { color:#ffb09c; text-shadow:0 0 12px rgba(255,130,100,.7), 0 0 24px rgba(255,100,80,.35); }
   /* settings sheet pops in */
-  #settings.open, #history.open { animation:fadein .18s ease-out; }
-  #settings.open .sheet, #history.open .sheet { animation:sheetin .26s cubic-bezier(.2,.9,.3,1.15); }
+  #settings.open, #history.open, #confirm.open { animation:fadein .18s ease-out; }
+  #settings.open .sheet, #history.open .sheet, #confirm.open .sheet { animation:sheetin .26s cubic-bezier(.2,.9,.3,1.15); }
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
   @keyframes sheetin { from { opacity:0; transform:translateY(14px) scale(.94); } to { opacity:1; transform:none; } }
   @media (prefers-reduced-motion: reduce) { html[data-theme] *, html[data-theme] *::before, html[data-theme] *::after { animation:none !important; } }
@@ -957,13 +967,19 @@
     <section class="sh-col">
     <div class="sh-group">Game</div>
     <div class="sh-row"><span>Players</span><div class="seg" id="playersSeg" role="group" aria-label="Number of players"><button data-n="2">2</button><button data-n="3">3</button><button data-n="4">4</button></div></div>
-    <div class="sh-row" id="playersAsk" hidden><span id="askTxt">Restart?</span><div class="seg"><button id="askNo">Cancel</button><button id="askYes" aria-pressed="true">Restart</button></div></div>
     <div class="sh-row"><span>Commander damage</span><div class="seg" id="cmdSeg" role="group" aria-label="Commander damage entry"><button data-m="received">Received</button><button data-m="dealt">Dealt</button></div></div>
     <div class="sh-row"><span>Partner commanders</span><button id="partnerBtn" class="switch" role="switch" aria-checked="false" aria-label="Partner commanders"><i></i></button></div>
     <div class="sh-row"><span>Poison counters</span><button id="poisonBtn" class="switch" role="switch" aria-checked="false" aria-label="Poison counters"><i></i></button></div>
     </section>
     </div>
     <div class="sh-foot">&copy; AlpacaSoft and <a href="https://instagram.com/darksaiko" target="_blank" rel="noopener noreferrer">Saiko</a></div>
+  </div>
+</div>
+
+<div id="confirm" aria-hidden="true">
+  <div class="sheet" role="alertdialog" aria-labelledby="askTxt" aria-describedby="askSub">
+    <div class="cf-body"><div id="askTxt">Restart with 3 players?</div><div id="askSub">This starts a new game.</div></div>
+    <div class="cf-btns"><button id="askNo">Cancel</button><button id="askYes">Restart</button></div>
   </div>
 </div>
 
@@ -1804,7 +1820,7 @@ themeSel.innerHTML = Object.keys(THEMES).map(k => `<option value="${k}">${THEMES
 const partnerBtn = document.getElementById('partnerBtn'), calmBtn = document.getElementById('calmBtn'), poisonBtn = document.getElementById('poisonBtn');
 function syncSettingsUI() { document.querySelectorAll('#cmdSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === settings.cmdMode))); document.querySelectorAll('#playersSeg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === settings.players))); themeSel.value = settings.theme; soundBtn.setAttribute('aria-checked', String(settings.sound)); partnerBtn.setAttribute('aria-checked', String(settings.partners)); calmBtn.setAttribute('aria-checked', String(settings.calm)); poisonBtn.setAttribute('aria-checked', String(settings.poison)); }
 let setOpenedAt = 0;
-function openSettings() { document.getElementById('playersAsk').hidden = true; syncSettingsUI(); setEl.classList.add('open'); setEl.setAttribute('aria-hidden', 'false'); setOpenedAt = Date.now(); }
+function openSettings() { syncSettingsUI(); setEl.classList.add('open'); setEl.setAttribute('aria-hidden', 'false'); setOpenedAt = Date.now(); }
 function closeSettings() { setEl.classList.remove('open'); setEl.setAttribute('aria-hidden', 'true'); }
 themeSel.addEventListener('change', () => { settings.theme = themeSel.value; saveSettings(); applyTheme(); render(); });
 soundBtn.addEventListener('click', () => {
@@ -1821,7 +1837,7 @@ poisonBtn.addEventListener('click', () => {
   if (!settings.poison && s.p) { s.p = false; save(); }   // leave poison mode when the option is switched off (the counts are kept)
   render();
 });
-const askEl = document.getElementById('playersAsk');
+const askEl = document.getElementById('confirm');
 let askN = 0;
 const gameTouched = () => s.life.some(v => v !== START) || s.cmd.some(r => r.some(q => q.some(v => v))) || s.poison.some(v => v);
 function setPlayers(n) {       // a different table size is a new game: the old numbers would make no sense
@@ -1830,15 +1846,17 @@ function setPlayers(n) {       // a different table size is a new game: the old 
   prevDead = null; prevAlive = COLORS.length; champ = -1; champShow = false; clearTimeout(champTimer);   // no death/champion sounds for the change itself
   skipDeltas = true; wipe(); syncSettingsUI(); render(); deal();
 }
+const closeAsk = () => { askEl.classList.remove('open'); askEl.setAttribute('aria-hidden', 'true'); };
 document.getElementById('playersSeg').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || +b.dataset.n === settings.players) return;
   askN = +b.dataset.n;
   if (!gameTouched()) { setPlayers(askN); return; }
-  document.getElementById('askTxt').textContent = 'Restart as ' + askN + ' players?';
-  askEl.hidden = false;
+  document.getElementById('askTxt').textContent = 'Restart with ' + askN + ' players?';
+  askEl.classList.add('open'); askEl.setAttribute('aria-hidden', 'false');
 });
-document.getElementById('askYes').addEventListener('click', () => { askEl.hidden = true; setPlayers(askN); });
-document.getElementById('askNo').addEventListener('click', () => { askEl.hidden = true; });
+document.getElementById('askYes').addEventListener('click', () => { closeAsk(); setPlayers(askN); });
+document.getElementById('askNo').addEventListener('click', closeAsk);
+askEl.addEventListener('click', e => { if (e.target === askEl) closeAsk(); });
 document.getElementById('cmdSeg').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || b.dataset.m === settings.cmdMode) return;
   settings.cmdMode = b.dataset.m; saveSettings(); syncSettingsUI(); render();
