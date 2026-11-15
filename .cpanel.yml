@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/alpacaqr/public_html/commander/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -Rf commander/. $DEPLOYPATH
