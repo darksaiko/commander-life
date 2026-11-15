@@ -226,7 +226,7 @@
     background:transparent; color:var(--sh-ink); font:inherit; }
   #themeSel option { background:var(--sh-bg); color:var(--sh-ink); }
   .seg { display:flex; border:1.5px solid var(--sh-line); border-radius:999px; overflow:hidden; }
-  .seg button { min-width:42px; white-space:nowrap; height:30px; padding:0 4px; background:transparent; border:0; color:var(--sh-ink); font:inherit; font-weight:700; }
+  .seg button { min-width:42px; white-space:nowrap; padding:0 11px; height:30px; background:transparent; border:0; color:var(--sh-ink); font:inherit; font-weight:700; }
   .seg button[aria-pressed="true"] { background:var(--sh-acc); color:var(--sh-bg, #000); }
   .panel.empty { background:transparent !important; box-shadow:none !important; border:1.5px dashed rgba(255,255,255,.16) !important; backdrop-filter:none !important; animation:none !important; }
   .panel.empty > * { display:none !important; }
@@ -352,6 +352,15 @@
 
   /* ---------- credits line + partner row (settings) ---------- */
   #themeSel { min-width:158px; }
+  html[data-theme="pixel"] .seg { border-radius:0; border-width:2px; }
+  .sh-group { padding:12px 0 4px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; opacity:.6; }
+  .sh-col .sh-group + .sh-row { border-top:1px solid var(--sh-sep); }
+  /* landscape: two columns, so the whole sheet fits on screen without scrolling */
+  @media (orientation:landscape) {
+    #settings .sheet { width:min(94vw,700px); }
+    .sh-cols { display:grid; grid-template-columns:1fr 1fr; column-gap:26px; align-items:start; }
+    .sh-group { padding-top:4px; }
+  }
   .sh-foot { border-top:1px solid var(--sh-sep); padding:10px 0 8px; text-align:center; font-size:12px; opacity:.8; letter-spacing:.02em; }
   .sh-foot a { color:var(--sh-ink); text-decoration:underline; text-underline-offset:2px; }
   @media (max-height:360px) { .sh-row { min-height:44px; } .sh-foot { padding:7px 0 5px; } }
@@ -938,14 +947,22 @@
 <div id="settings" aria-hidden="true">
   <div class="sheet" role="dialog" aria-label="Settings">
     <div class="sh-head"><span class="sh-title">Settings</span><button id="closeSet" aria-label="Close">&#10005;</button></div>
+    <div class="sh-cols">
+    <section class="sh-col">
+    <div class="sh-group">Look &amp; sound</div>
     <label class="sh-row"><span>Style</span><select id="themeSel"></select></label>
     <div class="sh-row"><span>Sound</span><button id="soundBtn" class="switch" role="switch" aria-checked="true" aria-label="Sound"><i></i></button></div>
+    <div class="sh-row"><span>Reduce animations</span><button id="calmBtn" class="switch" role="switch" aria-checked="false" aria-label="Reduce animations"><i></i></button></div>
+    </section>
+    <section class="sh-col">
+    <div class="sh-group">Game</div>
     <div class="sh-row"><span>Players</span><div class="seg" id="playersSeg" role="group" aria-label="Number of players"><button data-n="2">2</button><button data-n="3">3</button><button data-n="4">4</button></div></div>
     <div class="sh-row" id="playersAsk" hidden><span id="askTxt">Restart?</span><div class="seg"><button id="askNo">Cancel</button><button id="askYes" aria-pressed="true">Restart</button></div></div>
     <div class="sh-row"><span>Commander damage</span><div class="seg" id="cmdSeg" role="group" aria-label="Commander damage entry"><button data-m="received">Received</button><button data-m="dealt">Dealt</button></div></div>
     <div class="sh-row"><span>Partner commanders</span><button id="partnerBtn" class="switch" role="switch" aria-checked="false" aria-label="Partner commanders"><i></i></button></div>
     <div class="sh-row"><span>Poison counters</span><button id="poisonBtn" class="switch" role="switch" aria-checked="false" aria-label="Poison counters"><i></i></button></div>
-    <div class="sh-row"><span>Reduce animations</span><button id="calmBtn" class="switch" role="switch" aria-checked="false" aria-label="Reduce animations"><i></i></button></div>
+    </section>
+    </div>
     <div class="sh-foot">&copy; AlpacaSoft and <a href="https://instagram.com/darksaiko" target="_blank" rel="noopener noreferrer">Saiko</a></div>
   </div>
 </div>
