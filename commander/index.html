@@ -737,7 +737,7 @@
   .ar { position:absolute; inset:0; width:100%; height:100%; overflow:visible; transform-origin:50% 50%; will-change:transform; opacity:.62;
     animation:spin var(--sp) linear infinite; animation-delay:calc(var(--ph) * -1); }
   .ar * { fill:none; stroke-width:1; stroke-linejoin:round; }
-  .ar.ra { --sp:140s; } .ar.rb { --sp:90s; animation-direction:reverse; inset:18%; width:64%; height:64%; opacity:.9; } .ar.rc { --sp:55s; inset:14%; width:72%; height:72%; opacity:.3; }
+  .ar.ra { --sp:140s; } .ar.rb { --sp:90s; animation-direction:reverse; inset:23.5%; width:53%; height:53%; opacity:.9; } .ar.rc { --sp:55s; inset:14%; width:72%; height:72%; opacity:.3; }
   .ar.rb *, .ar.rc * { stroke-width:1.5; }
   .ar.ra * { stroke:rgba(200,160,88,.55); }
   .ar.rb *, .ar.rc * { stroke:rgba(var(--rgb),.5); }
@@ -776,7 +776,11 @@
   html[data-theme="alchemy"] .panel.low .life .num.pop { animation:apop .45s cubic-bezier(.2,.9,.3,1.2), aember 2.4s steps(1,end) .45s infinite; }
   @keyframes aember { 0%,100% { opacity:1; } 8% { opacity:.75; } 12% { opacity:1; } 40% { opacity:.88; } 44% { opacity:1; } 70% { opacity:.78; } 74% { opacity:1; } }
   html[data-theme="alchemy"] .panel.low .ar.rb *, html[data-theme="alchemy"] .panel.low .ar.rc * { stroke:rgba(255,120,70,.5); }
-  html[data-theme="alchemy"] .big { color:#e9d29c; font-family:var(--num); font-weight:300; font-size:30px; text-shadow:none; }
+  html[data-theme="alchemy"] .big { color:#e9d29c; font-size:0; text-shadow:none; }
+  /* the + and − are drawn, not typed, so they sit dead centre in the ring whatever font the phone has */
+  html[data-theme="alchemy"] .big::after { content:""; position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px 0 0 -8px; pointer-events:none;
+    background:linear-gradient(currentColor,currentColor) center/100% 1.75px no-repeat; }
+  html[data-theme="alchemy"] .big[data-d="1"]::after { background:linear-gradient(currentColor,currentColor) center/100% 1.75px no-repeat, linear-gradient(currentColor,currentColor) center/1.75px 100% no-repeat; }
   html[data-theme="alchemy"] .big::before { width:44px; height:44px; margin:-22px 0 0 -22px; border:1.2px solid rgba(var(--rgb),.7);
     background:radial-gradient(circle at 35% 30%, #2a251d, #131009); box-shadow:0 0 0 3px #0f0d0a, 0 0 0 4px rgba(190,150,80,.35), 0 4px 10px rgba(0,0,0,.6);
     transition:transform .12s, box-shadow .12s, background .12s; }
@@ -1121,7 +1125,7 @@ const ALCH = (() => {
   const poly = (r, n, o) => `<polygon points="${Array.from({ length: n }, (_, k) => P(r, o + k * 360 / n).map(f).join(',')).join(' ')}"/>`;
   const ring = (r, x = 100, y = 100, x2 = '') => `<circle cx="${f(x)}" cy="${f(y)}" r="${r}" ${x2}/>`;
   const node = (r, a) => { const [x, y] = P(r, a); return ring(5.5, x, y, 'fill="rgba(13,11,9,.85)" stroke-opacity=".9"') + ring(2, x, y, 'fill-opacity=".7" stroke="none"'); };
-  const base = ring(74) + ring(68, 100, 100, 'stroke-opacity=".4"');
+  const base = ring(71) + ring(68.5, 100, 100, 'stroke-opacity=".4"');
   // three classic constructions, one per seat: figures nested inside each other, each touching the one around it
   const B = [
     base + poly(66, 6, 0) + poly(66, 3, 0) + ring(33, 100, 100, 'stroke-opacity=".5"') + [0, 120, 240].map(a => node(66, a)).join(''),    // hexagon holding a triangle
