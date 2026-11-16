@@ -768,7 +768,7 @@
   @keyframes afdn { 0% { opacity:.8; transform:scale(1.3); } 100% { opacity:0; transform:scale(.6); } }
   @keyframes aspk { 0% { opacity:1; transform:translate(0,0) scale(1.3); } 100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(.2); } }
   @keyframes aspd { 0% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(.4); } 30% { opacity:1; } 100% { opacity:0; transform:translate(0,0) scale(1.1); } }
-  html[data-theme="alchemy"] .life .num { font-weight:400; letter-spacing:-.01em; font-size:min(14.7vw,64px); color:#f6e6c0;
+  html[data-theme="alchemy"] .life .num { top:calc(var(--nd, 0) * 1em); font-weight:400; letter-spacing:-.01em; font-size:min(14.7vw,64px); color:#f6e6c0;
     color:color-mix(in srgb, rgb(var(--rgb)) 38%, #fff3d6); text-shadow:0 0 16px rgba(var(--rgb),.5), 0 2px 0 rgba(0,0,0,.6); }
   html[data-theme="alchemy"] .pop { animation:apop .45s cubic-bezier(.2,.9,.3,1.2); }
   @keyframes apop { 0% { transform:scale(1.2); opacity:.6; } 100% { transform:scale(1); opacity:1; } }
@@ -1765,7 +1765,23 @@ function applyTheme() {
   if (settings.calm) document.documentElement.dataset.calm = '1'; else delete document.documentElement.dataset.calm;
   if (settings.poison) document.documentElement.dataset.poison = '1'; else delete document.documentElement.dataset.poison;
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme().meta);
+  nudgeNumbers();
 }
+// Alchemy's serif digits sit differently inside their line box on every phone (some fonts have old-style figures that hang low).
+// So measure the real ink of "40" in the font this phone actually uses and move the number so its ink is centred in the panel.
+let nudgeKey = '';
+function nudgeNumbers() {
+  const root = document.documentElement;
+  if (settings.theme !== 'alchemy') { root.style.removeProperty('--nd'); nudgeKey = ''; return; }
+  try {
+    const fam = getComputedStyle(root).getPropertyValue('--num').trim() || 'serif';
+    if (nudgeKey === fam) return;
+    const g = document.createElement('canvas').getContext('2d'); g.font = '400 100px ' + fam;
+    const m = g.measureText('40'), dy = ((m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) - (m.fontBoundingBoxAscent - m.fontBoundingBoxDescent)) / 2 / 100;
+    if (isFinite(dy) && Math.abs(dy) < .4) { root.style.setProperty('--nd', dy.toFixed(4)); nudgeKey = fam; }
+  } catch (e) {}
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { nudgeKey = ''; nudgeNumbers(); });
 
 const setEl = document.getElementById('settings'), themeSel = document.getElementById('themeSel'), soundBtn = document.getElementById('soundBtn');
 themeSel.innerHTML = Object.keys(THEMES).map(k => `<option value="${k}">${THEMES[k].label}</option>`).join('');
