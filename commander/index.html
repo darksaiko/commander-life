@@ -741,17 +741,16 @@
   html[data-theme="luma"] .lrip { opacity:0;
     background:radial-gradient(circle closest-side, rgba(var(--rgb),0) 0, rgba(var(--rgb),0) 72%, rgba(var(--rgb),.2) 90%, rgba(var(--rgb),.85) 96%, rgba(var(--rgb),0) 100%);
     animation:lrip 7.5s cubic-bezier(.25,.5,.4,1) infinite; animation-delay:calc(var(--n) * -.9s - var(--ph)); }
-  html[data-theme="luma"] .lrip.r2 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 2.5s); }
-  html[data-theme="luma"] .lrip.r3 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 5s); }
+  html[data-theme="luma"] .lrip.r2 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 3.75s); }
   @keyframes lrip { 0% { opacity:0; transform:scale(.38); } 12% { opacity:.55; } 100% { opacity:0; transform:scale(1.75); } }
   /* a change in life: a bright ring bursts out of the number (down: the same, but rose-red) */
   html[data-theme="luma"] .lpulse { opacity:0; transform:scale(.3);
-    background:radial-gradient(circle closest-side, rgba(var(--rgb),0) 0, rgba(var(--rgb),.3) 60%, rgba(var(--rgb),.95) 94%, rgba(var(--rgb),0) 100%); }
+    background:radial-gradient(circle closest-side, rgba(var(--rgb),0) 0, rgba(var(--rgb),0) 78%, rgba(var(--rgb),.9) 95%, rgba(var(--rgb),0) 100%); }
   html[data-theme="luma"] .lfx.pu .lpulse { animation:lpu .85s cubic-bezier(.12,.7,.25,1) backwards; }
-  html[data-theme="luma"] .lfx.pd .lpulse { background:radial-gradient(circle closest-side, rgba(255,70,120,0) 0, rgba(255,70,120,.3) 60%, rgba(255,70,120,.95) 94%, rgba(255,70,120,0) 100%);
+  html[data-theme="luma"] .lfx.pd .lpulse { background:radial-gradient(circle closest-side, rgba(255,70,120,0) 0, rgba(255,70,120,0) 78%, rgba(255,70,120,.9) 95%, rgba(255,70,120,0) 100%);
     animation:lpd .85s cubic-bezier(.12,.7,.25,1) backwards; }
-  @keyframes lpu { 0% { opacity:1; transform:scale(.3); } 100% { opacity:0; transform:scale(2.1); } }
-  @keyframes lpd { 0% { opacity:1; transform:scale(.3); } 100% { opacity:0; transform:scale(2.1); } }
+  @keyframes lpu { 0% { opacity:.9; transform:scale(.3); } 100% { opacity:0; transform:scale(1.9); } }
+  @keyframes lpd { 0% { opacity:.9; transform:scale(.3); } 100% { opacity:0; transform:scale(1.9); } }
   /* the edge comets: a bright light running round the frame (one in the seat's colour, one pink-hot). Each is four short bars that slide
      along the four edges in turn, seen through a thin frame-shaped window, so it only moves transforms: no repainting. */
   html[data-theme="luma"] .lrg { position:absolute; inset:0; border-radius:inherit; padding:3px; box-sizing:border-box; overflow:hidden; --c1:var(--rgb);
@@ -1209,16 +1208,30 @@ const ALCH = (() => {
 const lumaFx = (i, burst = '') => {
   let seed = 7 + i * 131, rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647, pts = '';
   const cols = ['var(--rgb)', '255,255,255', '255,90,214', '90,240,255'];
-  for (let k = 0; k < 16; k++) {
+  for (let k = 0; k < 12; k++) {
     const c = k % 4 === 3 ? cols[3] : k % 4 === 2 ? cols[2] : k % 5 === 0 ? cols[1] : cols[0];
     pts += `<i class="${k % 3 === 0 ? 'dm' : ''}" style="--x:${Math.round(rnd() * 96 + 2)}%;--s:${(1.8 + rnd() * 2.6).toFixed(1)}px;--t:${(8 + rnd() * 9).toFixed(1)}s;--dl:${(-rnd() * 17).toFixed(1)}s;--dx:${Math.round(rnd() * 36 - 18)}px;--o:${(.45 + rnd() * .5).toFixed(2)};--pc:${c}"></i>`;
   }
-  return `<div class="lfx${burst}" aria-hidden="true"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lrip r3"></span><span class="lpulse"></span>`
+  return `<div class="lfx${burst}" aria-hidden="true"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
     + `<span class="lpt">${pts}</span><span class="lrg e2"><i></i><i></i><i></i><i></i></span><span class="lrg e1"><i></i><i></i><i></i><i></i></span></div>`;
 };
 const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true"><span class="aglow"></span><span class="abeam"></span>`
   + `<svg class="ar ra" viewBox="0 0 200 200">${ALCH.a}</svg><svg class="ar rb" viewBox="0 0 200 200">${ALCH.B[0]}</svg><svg class="ar rc" viewBox="0 0 200 200">${ALCH.c}</svg>`
   + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><div class="asp">${ALCH.sparks}</div></div>`;
+let sceneToken = 0;
+function fillScene() {
+  const my = ++sceneToken; let k = 0;
+  const step = () => {
+    if (my !== sceneToken) return;                       // the board was redrawn meanwhile: that redraw starts its own fill
+    const panels = document.getElementById('board').children;
+    while (k < panels.length) {
+      const sl = panels[k].querySelector(':scope > .lfxslot'), i = k++;
+      if (sl) { sl.outerHTML = lumaFx(i, sl.dataset.b || ''); break; }
+    }
+    if (k < panels.length) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
 function firePulse(el, up) {              // Luma: a pulse of light leaves the number whenever life changes
   const fx = el.querySelector('.lfx'); if (!fx) return;
   fx.classList.remove('pu', 'pd'); void fx.offsetWidth; fx.classList.add(up ? 'pu' : 'pd');
@@ -1398,8 +1411,9 @@ function render() {
       }).join('');
       body = `<div class="seats">${seats}</div>`;
     }
-    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' && !s.c ? lumaFx(i, lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : '') : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
+    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' && !s.c ? `<span class="lfxslot" data-b="${ lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
   }).join(''); }
+  if (settings.theme === 'luma' && !s.c) fillScene();
   document.getElementById('cbtn').classList.toggle('on', s.c);
   document.getElementById('dbtn').classList.toggle('on', s.p);
   paintDeltas();
