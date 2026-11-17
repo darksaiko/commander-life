@@ -739,14 +739,12 @@
   /* a change in life: a bright ring bursts out of the number and the aura flares (down: a rose ring falls inward and the aura dips) */
   html[data-theme="luma"] .lpulse { position:absolute; left:50%; top:50%; height:96%; aspect-ratio:1; margin:0; border-radius:50%; opacity:0;
     border:3px solid rgb(var(--rgb)); box-shadow:0 0 26px 4px rgba(var(--rgb),.85), inset 0 0 22px rgba(var(--rgb),.55); transform:translate(-50%,-50%) scale(.3); }
-  html[data-theme="luma"] .lfx.pu .lpulse { animation:lpu .85s cubic-bezier(.12,.7,.25,1) both; }
-  html[data-theme="luma"] .lfx.pu .laura { animation:lauraU .85s ease-out both, laura 5.5s ease-in-out .85s infinite; }
-  html[data-theme="luma"] .lfx.pd .lpulse { border-color:#ff5a88; box-shadow:0 0 22px 3px rgba(255,70,120,.85), inset 0 0 22px rgba(255,70,120,.55); animation:lpd .7s cubic-bezier(.5,0,.8,.45) both; }
-  html[data-theme="luma"] .lfx.pd .laura { animation:lauraD .7s ease-out both, laura 5.5s ease-in-out .7s infinite; }
+  html[data-theme="luma"] .lfx.pu .lpulse { animation:lpu .85s cubic-bezier(.12,.7,.25,1) backwards; }
+  html[data-theme="luma"] .lfx.pd .lpulse { border-color:#ff5a88; box-shadow:0 0 22px 3px rgba(255,70,120,.85), inset 0 0 22px rgba(255,70,120,.55); animation:lpd .7s cubic-bezier(.5,0,.8,.45) backwards; }
+  html[data-theme="luma"] .lpulse::before { content:""; position:absolute; inset:-60%; border-radius:50%; background:radial-gradient(circle, rgba(var(--rgb),.5), rgba(var(--rgb),0) 62%); }
+  html[data-theme="luma"] .lfx.pd .lpulse::before { background:radial-gradient(circle, rgba(255,70,120,.5), rgba(255,70,120,0) 62%); }
   @keyframes lpu { 0% { opacity:1; transform:translate(-50%,-50%) scale(.3); } 100% { opacity:0; transform:translate(-50%,-50%) scale(2.1); } }
   @keyframes lpd { 0% { opacity:.95; transform:translate(-50%,-50%) scale(1.9); } 100% { opacity:0; transform:translate(-50%,-50%) scale(.3); } }
-  @keyframes lauraU { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.35); } 100% { opacity:.85; transform:translate(-50%,-50%) scale(1); } }
-  @keyframes lauraD { 0% { opacity:.25; transform:translate(-50%,-50%) scale(.8); } 100% { opacity:.8; transform:translate(-50%,-50%) scale(.95); } }
   @media (orientation:portrait) { html[data-theme="luma"] .laura { height:auto; width:150%; } html[data-theme="luma"] .lrip, html[data-theme="luma"] .lpulse { height:auto; width:92%; } }
   /* the edge comets: a bright light running round the frame (one in the seat's colour, one pink-hot). Each is four short bars that slide
      along the four edges in turn, seen through a thin frame-shaped window, so it only moves transforms: no repainting. */
