@@ -450,7 +450,7 @@
   @keyframes bob { 0%,100% { transform:translateX(-50%) translateY(0); } 50% { transform:translateX(-50%) translateY(-4px); } }
   /* number changes: a punchy neon flare */
   html[data-theme="luma"] .pop { animation:lumapop .5s cubic-bezier(.2,.9,.3,1.3); }
-  @keyframes lumapop { 0% { transform:scale(1.22); filter:brightness(1.9) blur(.6px); } 45% { filter:brightness(1.35); } 100% { transform:scale(1); filter:none; } }
+  @keyframes lumapop { 0% { transform:scale(1.22); opacity:.7; } 100% { transform:scale(1); opacity:1; } }   /* scale and fade only: a filter here made the phone redraw the glowing number every frame */
   /* low life: the number beats like a heart */
   html[data-theme="luma"] .panel.low .life .num { will-change:transform; animation:beat 1.15s ease-in-out infinite; animation-delay:calc(var(--ph) * -1); }
   html[data-theme="luma"] .panel.low .life .num.pop { animation:lumapop .5s cubic-bezier(.2,.9,.3,1.3), beat 1.15s ease-in-out .5s infinite; }
@@ -733,7 +733,7 @@
      with soft rings that keep drifting outward and fading as they go. Every layer here is the size of the panel and centred by
      its own box (the circle comes from the gradient, "closest-side" = half the panel's short side), so nothing depends on
      percent sizes or aspect-ratio tricks, and it stays centred in either orientation on any phone. */
-  html[data-theme="luma"] .laura, html[data-theme="luma"] .lrip, html[data-theme="luma"] .lpulse { position:absolute; inset:0; will-change:transform,opacity; }
+  html[data-theme="luma"] .laura, html[data-theme="luma"] .lrip { position:absolute; inset:0; will-change:transform,opacity; }
   html[data-theme="luma"] .laura { transform:scale(1.5);
     background:radial-gradient(circle closest-side, rgba(var(--rgb),.62) 0, rgba(var(--rgb),.32) 22%, rgba(var(--rgb),.12) 42%, rgba(var(--rgb),0) 66%);
     animation:laura 5.5s ease-in-out infinite; animation-delay:calc(var(--n) * -1.4s - var(--ph)); }
@@ -743,28 +743,26 @@
     animation:lrip 7.5s cubic-bezier(.25,.5,.4,1) infinite; animation-delay:calc(var(--n) * -.9s - var(--ph)); }
   html[data-theme="luma"] .lrip.r2 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 3.75s); }
   @keyframes lrip { 0% { opacity:0; transform:scale(.38); } 12% { opacity:.55; } 100% { opacity:0; transform:scale(1.75); } }
-  /* a change in life: a bright ring bursts out of the number (down: the same, but rose-red) */
-  html[data-theme="luma"] .lpulse { opacity:0; transform:scale(.3);
-    background:radial-gradient(circle closest-side, rgba(var(--rgb),0) 0, rgba(var(--rgb),0) 78%, rgba(var(--rgb),.9) 95%, rgba(var(--rgb),0) 100%); }
+  /* a change in life: a bright ring bursts out of the number (down: the same, but rose-red). The ring is a small fixed-size
+     layer that gets scaled up (a panel-sized one was a third of the cost of every tap); px margins centre it, no percent tricks. */
+  html[data-theme="luma"] .lpulse { position:absolute; left:50%; top:50%; width:120px; height:120px; margin:-60px 0 0 -60px; box-sizing:border-box; border-radius:50%;
+    opacity:0; transform:scale(.35); will-change:transform,opacity; border:2px solid rgb(var(--rgb)); box-shadow:0 0 12px 2px rgba(var(--rgb),.7), inset 0 0 10px rgba(var(--rgb),.4); }
   html[data-theme="luma"] .lfx.pu .lpulse { animation:lpu .85s cubic-bezier(.12,.7,.25,1) backwards; }
-  html[data-theme="luma"] .lfx.pd .lpulse { background:radial-gradient(circle closest-side, rgba(255,70,120,0) 0, rgba(255,70,120,0) 78%, rgba(255,70,120,.9) 95%, rgba(255,70,120,0) 100%);
-    animation:lpd .85s cubic-bezier(.12,.7,.25,1) backwards; }
-  @keyframes lpu { 0% { opacity:.9; transform:scale(.3); } 100% { opacity:0; transform:scale(1.9); } }
-  @keyframes lpd { 0% { opacity:.9; transform:scale(.3); } 100% { opacity:0; transform:scale(1.9); } }
+  html[data-theme="luma"] .lfx.pd .lpulse { border-color:#ff4678; box-shadow:0 0 12px 2px rgba(255,70,120,.7), inset 0 0 10px rgba(255,70,120,.4); animation:lpd .85s cubic-bezier(.12,.7,.25,1) backwards; }
+  @keyframes lpu { 0% { opacity:.9; transform:scale(.35); } 100% { opacity:0; transform:scale(2.5); } }
+  @keyframes lpd { 0% { opacity:.9; transform:scale(.35); } 100% { opacity:0; transform:scale(2.5); } }
   /* the frame's atmosphere: a soft glow in the seat's colour hugging the inside of the edge, breathing slowly. It is drawn once
      and only its opacity moves (one layer per panel), which is about the cheapest animation there is. */
   html[data-theme="luma"] .lglow { position:absolute; inset:0; border-radius:inherit; will-change:opacity;
     box-shadow:inset 0 0 34px 5px rgba(var(--rgb),.5), inset 0 0 9px 1px rgba(var(--rgb),.85);
     animation:lglow 6.5s ease-in-out infinite; animation-delay:calc(var(--n) * -1.9s - var(--ph) - 2.7s); }
   @keyframes lglow { 0%,100% { opacity:.35; } 50% { opacity:1; } }
-  /* neon dust drifting up: each speck is a tall invisible strip so one translate carries it the whole height of the panel */
-  html[data-theme="luma"] .lpt { position:absolute; inset:0; }
-  html[data-theme="luma"] .lpt i { position:absolute; left:var(--x); top:0; width:var(--s); height:100%; will-change:transform; animation:lfloat var(--t) linear infinite; animation-delay:var(--dl); }
-  html[data-theme="luma"] .lpt i::before { content:""; position:absolute; left:0; bottom:0; width:100%; aspect-ratio:1; border-radius:50%; opacity:0; animation:ltw var(--t) linear infinite; animation-delay:var(--dl);
-    background:rgb(var(--pc)); box-shadow:0 0 6px 1px rgba(var(--pc),.85); }
-  html[data-theme="luma"] .lpt i.dm::before { border-radius:1px; rotate:45deg; }
-  @keyframes lfloat { 0% { transform:translate(0,0); } 50% { transform:translate(var(--dx),-50%); } 100% { transform:translate(calc(var(--dx) * -.6),-100%); } }
-  @keyframes ltw { 0% { opacity:0; } 10% { opacity:var(--o); } 55% { opacity:calc(var(--o) * .5); } 70% { opacity:var(--o); } 100% { opacity:0; } }
+  /* neon dust drifting up: two layers at different speeds, each twice the panel's height holding two identical tiles of specks */
+  html[data-theme="luma"] .lpt { position:absolute; inset:0; overflow:hidden; }
+  html[data-theme="luma"] .lpt i { position:absolute; left:0; right:0; top:0; height:200%; background-size:100% 50%; background-repeat:repeat-y; will-change:transform;
+    animation:lfloat 19s linear infinite; animation-delay:calc(var(--n) * -3.1s - var(--ph)); }
+  html[data-theme="luma"] .lpt i.db { opacity:.6; animation-duration:31s; }
+  @keyframes lfloat { to { transform:translateY(-50%); } }
   /* the number itself: a hot neon tube with a pink and a cyan fringe */
   html[data-theme="luma"] .life .num { text-shadow:-1px 0 rgba(255,70,210,.45), 1px 0 rgba(70,240,255,.4), 0 0 3px #fff, 0 0 12px rgba(var(--rgb),.95), 0 0 26px rgba(var(--rgb),.8), 0 0 50px rgba(var(--rgb),.55); }
   html[data-theme="luma"] .panel.dead .lfx { display:none; }
@@ -1198,14 +1196,18 @@ const ALCH = (() => {
 // two comets of light that circle the panel's edge, and neon dust that drifts upward. All of it moves with transform/opacity only,
 // except the comets, which animate one angle on one small ring. ----
 const lumaFx = (i, burst = '') => {
-  let seed = 7 + i * 131, rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647, pts = '';
+  // Neon dust: each of the two layers is ONE element with its specks painted as background dots, tiled once per panel height and
+  // slid up by exactly one tile per loop. (One animated element per speck made every tap about four times more expensive.)
+  let seed = 7 + i * 131; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const cols = ['var(--rgb)', '255,255,255', '255,90,214', '90,240,255'];
-  for (let k = 0; k < 12; k++) {
-    const c = k % 4 === 3 ? cols[3] : k % 4 === 2 ? cols[2] : k % 5 === 0 ? cols[1] : cols[0];
-    pts += `<i class="${k % 3 === 0 ? 'dm' : ''}" style="--x:${Math.round(rnd() * 96 + 2)}%;--s:${(1.8 + rnd() * 2.6).toFixed(1)}px;--t:${(8 + rnd() * 9).toFixed(1)}s;--dl:${(-rnd() * 17).toFixed(1)}s;--dx:${Math.round(rnd() * 36 - 18)}px;--o:${(.45 + rnd() * .5).toFixed(2)};--pc:${c}"></i>`;
-  }
+  const layer = n => { const bg = [];
+    for (let k = 0; k < n; k++) {
+      const c = k % 4 === 3 ? cols[3] : k % 4 === 2 ? cols[2] : k % 5 === 0 ? cols[1] : cols[0], r = (.9 + rnd() * 1.1).toFixed(1), o = (.55 + rnd() * .4).toFixed(2);
+      bg.push(`radial-gradient(circle ${(r * 1.8).toFixed(1)}px at ${Math.round(rnd() * 94 + 3)}% ${Math.round(rnd() * 94 + 3)}%, rgba(${c},${o}) 0, rgba(${c},${o}) 50%, rgba(${c},0) 100%)`);
+    }
+    return bg.join(','); };
   return `<div class="lfx${burst}" aria-hidden="true"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
-    + `<span class="lpt">${pts}</span><span class="lglow"></span></div>`;
+    + `<span class="lpt"><i class="da" style="background-image:${layer(7)}"></i><i class="db" style="background-image:${layer(6)}"></i></span><span class="lglow"></span></div>`;
 };
 const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true"><span class="aglow"></span><span class="abeam"></span>`
   + `<svg class="ar ra" viewBox="0 0 200 200">${ALCH.a}</svg><svg class="ar rb" viewBox="0 0 200 200">${ALCH.B[0]}</svg><svg class="ar rc" viewBox="0 0 200 200">${ALCH.c}</svg>`
