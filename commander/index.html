@@ -725,27 +725,28 @@
   html[data-theme="luma"] .halo { opacity:.34; }
   html[data-theme="luma"] .arcane.gb { display:none; }
   /* a neon aura around the number: light that is brightest at the centre and thins out toward the edges, breathing slowly,
-     with soft rings that keep drifting outward and fading as they go */
-  html[data-theme="luma"] .laura { position:absolute; left:50%; top:50%; height:150%; aspect-ratio:1; margin:0; transform:translate(-50%,-50%); border-radius:50%;
-    background:radial-gradient(circle, rgba(var(--rgb),.62) 0, rgba(var(--rgb),.32) 22%, rgba(var(--rgb),.12) 42%, rgba(var(--rgb),0) 66%);
-    will-change:transform,opacity; animation:laura 5.5s ease-in-out infinite; animation-delay:calc(var(--n) * -1.4s - var(--ph)); }
-  @keyframes laura { 0%,100% { opacity:.7; transform:translate(-50%,-50%) scale(.93); } 50% { opacity:1; transform:translate(-50%,-50%) scale(1.04); } }
-  html[data-theme="luma"] .lrip { position:absolute; left:50%; top:50%; height:96%; aspect-ratio:1; margin:0; border-radius:50%; opacity:0; will-change:transform,opacity;
-    border:1.5px solid rgba(var(--rgb),.75); box-shadow:0 0 14px 1px rgba(var(--rgb),.5), inset 0 0 14px rgba(var(--rgb),.3);
+     with soft rings that keep drifting outward and fading as they go. Every layer here is the size of the panel and centred by
+     its own box (the circle comes from the gradient, "closest-side" = half the panel's short side), so nothing depends on
+     percent sizes or aspect-ratio tricks, and it stays centred in either orientation on any phone. */
+  html[data-theme="luma"] .laura, html[data-theme="luma"] .lrip, html[data-theme="luma"] .lpulse { position:absolute; inset:0; will-change:transform,opacity; }
+  html[data-theme="luma"] .laura { transform:scale(1.5);
+    background:radial-gradient(circle closest-side, rgba(var(--rgb),.62) 0, rgba(var(--rgb),.32) 22%, rgba(var(--rgb),.12) 42%, rgba(var(--rgb),0) 66%);
+    animation:laura 5.5s ease-in-out infinite; animation-delay:calc(var(--n) * -1.4s - var(--ph)); }
+  @keyframes laura { 0%,100% { opacity:.7; transform:scale(1.4); } 50% { opacity:1; transform:scale(1.56); } }
+  html[data-theme="luma"] .lrip { opacity:0;
+    background:radial-gradient(circle closest-side, rgba(var(--rgb),0) 0, rgba(var(--rgb),0) 72%, rgba(var(--rgb),.2) 90%, rgba(var(--rgb),.85) 96%, rgba(var(--rgb),0) 100%);
     animation:lrip 7.5s cubic-bezier(.25,.5,.4,1) infinite; animation-delay:calc(var(--n) * -.9s - var(--ph)); }
   html[data-theme="luma"] .lrip.r2 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 2.5s); }
   html[data-theme="luma"] .lrip.r3 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 5s); }
-  @keyframes lrip { 0% { opacity:0; transform:translate(-50%,-50%) scale(.38); } 12% { opacity:.55; } 100% { opacity:0; transform:translate(-50%,-50%) scale(1.75); } }
-  /* a change in life: a bright ring bursts out of the number and the aura flares (down: a rose ring falls inward and the aura dips) */
-  html[data-theme="luma"] .lpulse { position:absolute; left:50%; top:50%; height:96%; aspect-ratio:1; margin:0; border-radius:50%; opacity:0;
-    border:3px solid rgb(var(--rgb)); box-shadow:0 0 26px 4px rgba(var(--rgb),.85), inset 0 0 22px rgba(var(--rgb),.55); transform:translate(-50%,-50%) scale(.3); }
+  @keyframes lrip { 0% { opacity:0; transform:scale(.38); } 12% { opacity:.55; } 100% { opacity:0; transform:scale(1.75); } }
+  /* a change in life: a bright ring bursts out of the number (down: the same, but rose-red) */
+  html[data-theme="luma"] .lpulse { opacity:0; transform:scale(.3);
+    background:radial-gradient(circle closest-side, rgba(var(--rgb),0) 0, rgba(var(--rgb),.3) 60%, rgba(var(--rgb),.95) 94%, rgba(var(--rgb),0) 100%); }
   html[data-theme="luma"] .lfx.pu .lpulse { animation:lpu .85s cubic-bezier(.12,.7,.25,1) backwards; }
-  html[data-theme="luma"] .lfx.pd .lpulse { border-color:#ff5a88; box-shadow:0 0 22px 3px rgba(255,70,120,.85), inset 0 0 22px rgba(255,70,120,.55); animation:lpd .85s cubic-bezier(.12,.7,.25,1) backwards; }
-  html[data-theme="luma"] .lpulse::before { content:""; position:absolute; inset:-60%; border-radius:50%; background:radial-gradient(circle, rgba(var(--rgb),.5), rgba(var(--rgb),0) 62%); }
-  html[data-theme="luma"] .lfx.pd .lpulse::before { background:radial-gradient(circle, rgba(255,70,120,.5), rgba(255,70,120,0) 62%); }
-  @keyframes lpu { 0% { opacity:1; transform:translate(-50%,-50%) scale(.3); } 100% { opacity:0; transform:translate(-50%,-50%) scale(2.1); } }
-  @keyframes lpd { 0% { opacity:1; transform:translate(-50%,-50%) scale(.3); } 100% { opacity:0; transform:translate(-50%,-50%) scale(2.1); } }
-  @media (orientation:portrait) { html[data-theme="luma"] .laura { height:auto; width:150%; } html[data-theme="luma"] .lrip, html[data-theme="luma"] .lpulse { height:auto; width:92%; } }
+  html[data-theme="luma"] .lfx.pd .lpulse { background:radial-gradient(circle closest-side, rgba(255,70,120,0) 0, rgba(255,70,120,.3) 60%, rgba(255,70,120,.95) 94%, rgba(255,70,120,0) 100%);
+    animation:lpd .85s cubic-bezier(.12,.7,.25,1) backwards; }
+  @keyframes lpu { 0% { opacity:1; transform:scale(.3); } 100% { opacity:0; transform:scale(2.1); } }
+  @keyframes lpd { 0% { opacity:1; transform:scale(.3); } 100% { opacity:0; transform:scale(2.1); } }
   /* the edge comets: a bright light running round the frame (one in the seat's colour, one pink-hot). Each is four short bars that slide
      along the four edges in turn, seen through a thin frame-shaped window, so it only moves transforms: no repainting. */
   html[data-theme="luma"] .lrg { position:absolute; inset:0; border-radius:inherit; padding:3px; box-sizing:border-box; overflow:hidden; --c1:var(--rgb);
@@ -1392,7 +1393,7 @@ function render() {
       }).join('');
       body = `<div class="seats">${seats}</div>`;
     }
-    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? lumaFx(i, lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : '') : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
+    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' && !s.c ? lumaFx(i, lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : '') : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
   }).join(''); }
   document.getElementById('cbtn').classList.toggle('on', s.c);
   document.getElementById('dbtn').classList.toggle('on', s.p);
