@@ -716,6 +716,57 @@
 
 
 
+
+  /* ================= Luma, amped: synthwave neon ================= */
+  @property --ang { syntax:'<angle>'; inherits:true; initial-value:0deg; }
+  .lfx { display:none; }
+  html[data-theme="luma"] .lfx { display:block; position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; border-radius:22.5px;
+    animation:lang 9s linear infinite; animation-delay:calc(var(--n) * -2.1s - var(--ph)); }
+  @keyframes lang { to { --ang:360deg; } }
+  /* the rings: still there, but a quiet layer behind the scene now */
+  html[data-theme="luma"] .halo { opacity:.34; }
+  html[data-theme="luma"] .arcane.gb { display:none; }
+  /* a neon aura around the number: light that is brightest at the centre and thins out toward the edges, breathing slowly,
+     with soft rings that keep drifting outward and fading as they go */
+  html[data-theme="luma"] .laura { position:absolute; left:50%; top:50%; height:150%; aspect-ratio:1; margin:0; transform:translate(-50%,-50%); border-radius:50%;
+    background:radial-gradient(circle, rgba(var(--rgb),.62) 0, rgba(var(--rgb),.32) 22%, rgba(var(--rgb),.12) 42%, rgba(var(--rgb),0) 66%);
+    will-change:transform,opacity; animation:laura 5.5s ease-in-out infinite; animation-delay:calc(var(--n) * -1.4s - var(--ph)); }
+  @keyframes laura { 0%,100% { opacity:.7; transform:translate(-50%,-50%) scale(.93); } 50% { opacity:1; transform:translate(-50%,-50%) scale(1.04); } }
+  html[data-theme="luma"] .lrip { position:absolute; left:50%; top:50%; height:96%; aspect-ratio:1; margin:0; border-radius:50%; opacity:0; will-change:transform,opacity;
+    border:1.5px solid rgba(var(--rgb),.75); box-shadow:0 0 14px 1px rgba(var(--rgb),.5), inset 0 0 14px rgba(var(--rgb),.3);
+    animation:lrip 7.5s cubic-bezier(.25,.5,.4,1) infinite; animation-delay:calc(var(--n) * -.9s - var(--ph)); }
+  html[data-theme="luma"] .lrip.r2 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 2.5s); }
+  html[data-theme="luma"] .lrip.r3 { animation-delay:calc(var(--n) * -.9s - var(--ph) - 5s); }
+  @keyframes lrip { 0% { opacity:0; transform:translate(-50%,-50%) scale(.38); } 12% { opacity:.55; } 100% { opacity:0; transform:translate(-50%,-50%) scale(1.75); } }
+  /* a change in life: a bright ring bursts out of the number and the aura flares (down: a rose ring falls inward and the aura dips) */
+  html[data-theme="luma"] .lpulse { position:absolute; left:50%; top:50%; height:96%; aspect-ratio:1; margin:0; border-radius:50%; opacity:0;
+    border:3px solid rgb(var(--rgb)); box-shadow:0 0 26px 4px rgba(var(--rgb),.85), inset 0 0 22px rgba(var(--rgb),.55); transform:translate(-50%,-50%) scale(.3); }
+  html[data-theme="luma"] .lfx.pu .lpulse { animation:lpu .85s cubic-bezier(.12,.7,.25,1) both; }
+  html[data-theme="luma"] .lfx.pu .laura { animation:lauraU .85s ease-out both, laura 5.5s ease-in-out .85s infinite; }
+  html[data-theme="luma"] .lfx.pd .lpulse { border-color:#ff5a88; box-shadow:0 0 22px 3px rgba(255,70,120,.85), inset 0 0 22px rgba(255,70,120,.55); animation:lpd .7s cubic-bezier(.5,0,.8,.45) both; }
+  html[data-theme="luma"] .lfx.pd .laura { animation:lauraD .7s ease-out both, laura 5.5s ease-in-out .7s infinite; }
+  @keyframes lpu { 0% { opacity:1; transform:translate(-50%,-50%) scale(.3); } 100% { opacity:0; transform:translate(-50%,-50%) scale(2.1); } }
+  @keyframes lpd { 0% { opacity:.95; transform:translate(-50%,-50%) scale(1.9); } 100% { opacity:0; transform:translate(-50%,-50%) scale(.3); } }
+  @keyframes lauraU { 0% { opacity:1; transform:translate(-50%,-50%) scale(1.35); } 100% { opacity:.85; transform:translate(-50%,-50%) scale(1); } }
+  @keyframes lauraD { 0% { opacity:.25; transform:translate(-50%,-50%) scale(.8); } 100% { opacity:.8; transform:translate(-50%,-50%) scale(.95); } }
+  @media (orientation:portrait) { html[data-theme="luma"] .laura { height:auto; width:150%; } html[data-theme="luma"] .lrip, html[data-theme="luma"] .lpulse { height:auto; width:92%; } }
+  /* the edge comets: a bright light running round the frame (one pink-hot, one in the seat's colour) */
+  html[data-theme="luma"] .lrg { position:absolute; inset:0; border-radius:inherit; padding:3px; box-sizing:border-box;
+    background:conic-gradient(from var(--ang), transparent 0 12%, rgba(var(--rgb),.9) 27%, #fff 30%, transparent 30.4%, transparent 62%, rgba(255,90,214,.9) 77%, #fff 80%, transparent 80.4%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; }
+  html[data-theme="luma"] .lrg.e2 { padding:9px; opacity:.32; }
+  /* neon dust drifting up: each speck is a tall invisible strip so one translate carries it the whole height of the panel */
+  html[data-theme="luma"] .lpt { position:absolute; inset:0; }
+  html[data-theme="luma"] .lpt i { position:absolute; left:var(--x); top:0; width:var(--s); height:100%; will-change:transform; animation:lfloat var(--t) linear infinite; animation-delay:var(--dl); }
+  html[data-theme="luma"] .lpt i::before { content:""; position:absolute; left:0; bottom:0; width:100%; aspect-ratio:1; border-radius:50%; opacity:0; animation:ltw var(--t) linear infinite; animation-delay:var(--dl);
+    background:rgb(var(--pc)); box-shadow:0 0 6px 1px rgba(var(--pc),.85); }
+  html[data-theme="luma"] .lpt i.dm::before { border-radius:1px; rotate:45deg; }
+  @keyframes lfloat { 0% { transform:translate(0,0); } 50% { transform:translate(var(--dx),-50%); } 100% { transform:translate(calc(var(--dx) * -.6),-100%); } }
+  @keyframes ltw { 0% { opacity:0; } 10% { opacity:var(--o); } 55% { opacity:calc(var(--o) * .5); } 70% { opacity:var(--o); } 100% { opacity:0; } }
+  /* the number itself: a hot neon tube with a pink and a cyan fringe */
+  html[data-theme="luma"] .life .num { text-shadow:-1px 0 rgba(255,70,210,.45), 1px 0 rgba(70,240,255,.4), 0 0 3px #fff, 0 0 12px rgba(var(--rgb),.95), 0 0 26px rgba(var(--rgb),.8), 0 0 50px rgba(var(--rgb),.55); }
+  html[data-theme="luma"] .panel.dead .lfx { display:none; }
+
   /* ================= theme: Alchemy (dark charcoal, antique gold, glowing amber; every player is one of the metals) ================= */
   html[data-theme="alchemy"]{ --bg:#0d0b09; --ink:#f3e6c4; --peach:#e4c98a; --yellow:#f0b84a;
      --num:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',serif;
@@ -1141,9 +1192,26 @@ const ALCH = (() => {
   for (let k = 0; k < 12; k++) { const ang = (k * 30 + (k % 3) * 7) * Math.PI / 180, r = 62 + (k * 37 % 5) * 9; sp.push(`<i style="--dx:${Math.round(Math.sin(ang) * r)}px;--dy:${Math.round(-Math.cos(ang) * r)}px;--k:${k}"></i>`); }
   return { a, B, c, sparks: sp.join('') };
 })();
+// ---- Luma, amped: an outrun scene behind each number (striped sun, a perspective grid that scrolls toward you, a horizon glow),
+// two comets of light that circle the panel's edge, and neon dust that drifts upward. All of it moves with transform/opacity only,
+// except the comets, which animate one angle on one small ring. ----
+const lumaFx = (i, burst = '') => {
+  let seed = 7 + i * 131, rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647, pts = '';
+  const cols = ['var(--rgb)', '255,255,255', '255,90,214', '90,240,255'];
+  for (let k = 0; k < 16; k++) {
+    const c = k % 4 === 3 ? cols[3] : k % 4 === 2 ? cols[2] : k % 5 === 0 ? cols[1] : cols[0];
+    pts += `<i class="${k % 3 === 0 ? 'dm' : ''}" style="--x:${Math.round(rnd() * 96 + 2)}%;--s:${(1.8 + rnd() * 2.6).toFixed(1)}px;--t:${(8 + rnd() * 9).toFixed(1)}s;--dl:${(-rnd() * 17).toFixed(1)}s;--dx:${Math.round(rnd() * 36 - 18)}px;--o:${(.45 + rnd() * .5).toFixed(2)};--pc:${c}"></i>`;
+  }
+  return `<div class="lfx${burst}" aria-hidden="true"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lrip r3"></span><span class="lpulse"></span>`
+    + `<span class="lpt">${pts}</span><span class="lrg e2"></span><span class="lrg e1"></span></div>`;
+};
 const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true"><span class="aglow"></span><span class="abeam"></span>`
   + `<svg class="ar ra" viewBox="0 0 200 200">${ALCH.a}</svg><svg class="ar rb" viewBox="0 0 200 200">${ALCH.B[0]}</svg><svg class="ar rc" viewBox="0 0 200 200">${ALCH.c}</svg>`
   + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><div class="asp">${ALCH.sparks}</div></div>`;
+function firePulse(el, up) {              // Luma: a pulse of light leaves the number whenever life changes
+  const fx = el.querySelector('.lfx'); if (!fx) return;
+  fx.classList.remove('pu', 'pd'); void fx.offsetWidth; fx.classList.add(up ? 'pu' : 'pd');
+}
 function fireBurst(el, up) {              // restart the burst of energy on this panel (up = life went up, otherwise it went down)
   const fx = el.querySelector('.afx'); if (!fx) return;
   fx.classList.remove('bu', 'bd'); void fx.offsetWidth; fx.classList.add(up ? 'bu' : 'bd');
@@ -1181,6 +1249,7 @@ function patchBoard(deadNow) {
         num.textContent = shown;
         popNum(num, ' pop ' + (prev && s.life[i] < prev.life[i] ? 'pdn' : 'pup'));
         if (settings.theme === 'alchemy' && prev) fireBurst(el, s.life[i] > prev.life[i]);
+        if (settings.theme === 'luma' && prev) firePulse(el, s.life[i] > prev.life[i]);
       }
       // the little poison badge under the life total
       const badge = pBadge(i), old = life.querySelector('.pbadge');
@@ -1318,7 +1387,7 @@ function render() {
       }).join('');
       body = `<div class="seats">${seats}</div>`;
     }
-    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
+    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? lumaFx(i, lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : '') : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
   }).join(''); }
   document.getElementById('cbtn').classList.toggle('on', s.c);
   document.getElementById('dbtn').classList.toggle('on', s.p);
