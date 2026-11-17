@@ -479,12 +479,13 @@
   @keyframes flow { from { filter:hue-rotate(0deg); } to { filter:hue-rotate(360deg); } }
   /* life change chips: +3 / -2 float above the number */
   .delta { display:block; position:absolute; left:50%; top:8%; z-index:3; pointer-events:none;
-    font-family:var(--num); font-size:22px; font-weight:300; letter-spacing:.02em; transform:translateX(-50%); transition:opacity .3s, margin-top .3s; }
+    font-family:var(--num); font-size:22px; font-weight:300; letter-spacing:.02em; transform:translateX(-50%); transition:opacity .3s, translate .3s; }
   html[data-theme="luma"] .delta.up   { color:#8bffcf; text-shadow:0 0 10px rgba(98,255,184,.9), 0 0 22px rgba(98,255,184,.5); }
   html[data-theme="luma"] .delta.down { color:#ff9aab; text-shadow:0 0 10px rgba(255,122,143,.9), 0 0 22px rgba(255,122,143,.5); }
   .delta.fresh { animation:chip .35s cubic-bezier(.2,.9,.3,1.4); }
-  .delta.out { opacity:0; margin-top:-10px; }
-  @keyframes chip { from { opacity:0; margin-top:14px; scale:.6; } to { opacity:1; margin-top:0; scale:1; } }
+  .delta.out { opacity:0; translate:0 -10px; }
+  /* translate/scale/opacity only, so the GPU runs it: animating margin-top re-laid out the page (and re-checked every animated layer) on each frame of every tap */
+  @keyframes chip { from { opacity:0; translate:0 14px; scale:.6; } to { opacity:1; translate:0 0; scale:1; } }
 
   /* life change chips in the other themes */
   html[data-theme="pixel"]  .delta { font-family:'Pixel8',monospace; font-weight:400; font-size:20px; }
@@ -736,6 +737,12 @@
      its own box (the circle comes from the gradient, "closest-side" = half the panel's short side), so nothing depends on
      percent sizes or aspect-ratio tricks, and it stays centred in either orientation on any phone. */
   html[data-theme="luma"] .laura, html[data-theme="luma"] .lrip { position:absolute; inset:0; will-change:transform,opacity; }
+  /* where container units exist: make those layers a square the size of the panel's short side, centred with px-free margins.
+     The circles come out identical (they were already sized to the short side) but each layer is about half the pixels. */
+  html[data-theme="luma"] .lfx { container-type:size; }
+  @supports (width:1cqmin) {
+    html[data-theme="luma"] .laura, html[data-theme="luma"] .lrip { inset:auto; left:50%; top:50%; width:100cqmin; height:100cqmin; margin:-50cqmin 0 0 -50cqmin; }
+  }
   html[data-theme="luma"] .laura { transform:scale(1.5);
     background:radial-gradient(circle closest-side, rgba(var(--rgb),.62) 0, rgba(var(--rgb),.32) 22%, rgba(var(--rgb),.12) 42%, rgba(var(--rgb),0) 66%);
     animation:laura 5.5s ease-in-out infinite; animation-delay:calc(var(--n) * -1.4s - var(--ph)); }
@@ -762,8 +769,7 @@
   /* neon dust drifting up: two layers at different speeds, each twice the panel's height holding two identical tiles of specks */
   html[data-theme="luma"] .lpt { position:absolute; inset:0; overflow:hidden; }
   html[data-theme="luma"] .lpt i { position:absolute; left:0; right:0; top:0; height:200%; background-size:100% 50%; background-repeat:repeat-y; will-change:transform;
-    animation:lfloat 19s linear infinite; animation-delay:calc(var(--n) * -3.1s - var(--ph)); }
-  html[data-theme="luma"] .lpt i.db { opacity:.6; animation-duration:31s; }
+    animation:lfloat 23s linear infinite; animation-delay:calc(var(--n) * -3.1s - var(--ph)); }
   @keyframes lfloat { to { transform:translateY(-50%); } }
   /* the number itself: a hot neon tube with a pink and a cyan fringe */
   html[data-theme="luma"] .life .num { text-shadow:-1px 0 rgba(255,70,210,.45), 1px 0 rgba(70,240,255,.4), 0 0 3px #fff, 0 0 12px rgba(var(--rgb),.95), 0 0 26px rgba(var(--rgb),.8), 0 0 50px rgba(var(--rgb),.55); }
@@ -807,20 +813,22 @@
     border:2px solid rgb(var(--rgb)); box-shadow:0 0 14px rgba(var(--rgb),.8), inset 0 0 14px rgba(var(--rgb),.5); }
   .af { position:absolute; left:50%; top:50%; width:26%; height:26%; margin:-13% 0 0 -13%; border-radius:50%; opacity:0;
     background:radial-gradient(circle, rgba(255,236,190,.85), rgba(var(--rgb),.35) 45%, rgba(var(--rgb),0) 70%); }
-  .asp i { position:absolute; left:50%; top:50%; width:4px; height:4px; margin:-2px 0 0 -2px; border-radius:50%; opacity:0;
-    background:#ffe6a8; box-shadow:0 0 6px 1px rgba(var(--rgb),.95); }
+  .asp { position:absolute; left:50%; top:50%; width:220px; height:220px; margin:-110px 0 0 -110px; opacity:0; background-image:var(--spu); background-repeat:no-repeat; }
   .afx.bu .ab { animation:abup .8s cubic-bezier(.15,.7,.3,1); }
   .afx.bu .af { animation:afup .55s ease-out; }
-  .afx.bu .asp i { animation:aspk .85s ease-out both; animation-delay:calc(var(--k) * 9ms); }
-  .afx.bd .ab { border-color:#ff7a45; box-shadow:0 0 14px rgba(255,100,50,.8), inset 0 0 14px rgba(255,100,50,.5); animation:abdn .6s cubic-bezier(.5,0,.8,.4); }
-  .afx.bd .af { background:radial-gradient(circle, rgba(255,150,90,.6), rgba(255,80,40,.2) 50%, rgba(255,80,40,0) 70%); animation:afdn .5s ease-out; }
-  .afx.bd .asp i { background:#ff9a60; box-shadow:0 0 6px 1px rgba(255,90,40,.95); animation:aspd .7s ease-in both; animation-delay:calc(var(--k) * 7ms); }
+  .afx.bu .asp { animation:aspk .85s ease-out; }
+  .afx.bd .ab, .afx .ab.dn { border-color:#ff7a45; box-shadow:0 0 14px rgba(255,100,50,.8), inset 0 0 14px rgba(255,100,50,.5); }
+  .afx.bd .af, .afx .af.dn { background:radial-gradient(circle, rgba(255,150,90,.6), rgba(255,80,40,.2) 50%, rgba(255,80,40,0) 70%); }
+  .afx.bd .asp, .afx .asp.dn { background-image:var(--spd); }
+  .afx.bd .ab { animation:abdn .6s cubic-bezier(.5,0,.8,.4); }
+  .afx.bd .af { animation:afdn .5s ease-out; }
+  .afx.bd .asp { animation:aspd .7s ease-in; }
   @keyframes abup { 0% { opacity:.95; transform:scale(.45); } 100% { opacity:0; transform:scale(2.15); } }
   @keyframes abdn { 0% { opacity:.9; transform:scale(1.7); } 100% { opacity:0; transform:scale(.4); } }
   @keyframes afup { 0% { opacity:1; transform:scale(.5); } 100% { opacity:0; transform:scale(1.5); } }
   @keyframes afdn { 0% { opacity:.8; transform:scale(1.3); } 100% { opacity:0; transform:scale(.6); } }
-  @keyframes aspk { 0% { opacity:1; transform:translate(0,0) scale(1.3); } 100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(.2); } }
-  @keyframes aspd { 0% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(.4); } 30% { opacity:1; } 100% { opacity:0; transform:translate(0,0) scale(1.1); } }
+  @keyframes aspk { 0% { opacity:1; transform:scale(.12); } 60% { opacity:.9; } 100% { opacity:0; transform:scale(1); } }
+  @keyframes aspd { 0% { opacity:0; transform:scale(1); } 30% { opacity:1; } 100% { opacity:0; transform:scale(.1); } }
   html[data-theme="alchemy"] .life .num { top:calc(var(--nd, 0) * 1em); font-weight:400; letter-spacing:-.01em; font-size:min(14.7vw,64px); color:#f6e6c0;
     color:color-mix(in srgb, rgb(var(--rgb)) 38%, #fff3d6); text-shadow:0 0 16px rgba(var(--rgb),.5), 0 2px 0 rgba(0,0,0,.6); }
   html[data-theme="alchemy"] .pop { animation:apop .45s cubic-bezier(.2,.9,.3,1.2); }
@@ -1190,9 +1198,15 @@ const ALCH = (() => {
   for (let k = 0; k < 8; k++) { const [x1, y1] = P(47, k * 45), [x2, y2] = P(53, k * 45); c += `<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}"/>`; }
   for (let k = 0; k < 6; k++) { const [x1, y1] = P(47, k * 60), [x2, y2] = P(18, k * 60); c += `<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" stroke-opacity=".45"/>`; }
   c += `<polygon points="${[0, 1, 2, 3].map(k => P(47, k * 90 + 45).map(f).join(',')).join(' ')}" stroke-opacity=".6"/>`;
-  const sp = [];
-  for (let k = 0; k < 12; k++) { const ang = (k * 30 + (k % 3) * 7) * Math.PI / 180, r = 62 + (k * 37 % 5) * 9; sp.push(`<i style="--dx:${Math.round(Math.sin(ang) * r)}px;--dy:${Math.round(-Math.cos(ang) * r)}px;--k:${k}"></i>`); }
-  return { a, B, c, sparks: sp.join('') };
+  // the 12 sparks of a burst, painted as dots on ONE 220px layer (centre = the number): the burst scales that layer out (or in),
+  // so the whole spray is a single GPU animation instead of 12
+  const spk = (core, glow) => { const g = [];
+    for (let k = 0; k < 12; k++) { const ang = (k * 30 + (k % 3) * 7) * Math.PI / 180, r = 62 + (k * 37 % 5) * 9;
+      const x = Math.round(110 + Math.sin(ang) * r), y = Math.round(110 - Math.cos(ang) * r);
+      g.push(`radial-gradient(circle 6px at ${x}px ${y}px, ${core} 0, ${core} 30%, ${glow} 45%, rgba(0,0,0,0) 100%)`); }
+    return g.join(','); };
+  const sparks = `--spu:${spk('#ffe6a8', 'rgba(var(--rgb),.75)')};--spd:${spk('#ff9a60', 'rgba(255,90,40,.75)')}`;
+  return { a, B, c, sparks };
 })();
 // ---- Luma, amped: an outrun scene behind each number (striped sun, a perspective grid that scrolls toward you, a horizon glow),
 // two comets of light that circle the panel's edge, and neon dust that drifts upward. All of it moves with transform/opacity only,
@@ -1209,11 +1223,11 @@ const lumaFx = (i, burst = '') => {
     }
     return bg.join(','); };
   return `<div class="lfx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="laura"></span><span class="halo">${ARCANE}</span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
-    + `<span class="lpt"><i class="da" style="background-image:${layer(7)}"></i><i class="db" style="background-image:${layer(6)}"></i></span><span class="lglow"></span></div>`;
+    + `<span class="lpt"><i class="da" style="background-image:${layer(13)}"></i></span><span class="lglow"></span></div>`;
 };
 const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="aglow"></span><span class="abeam"></span>`
   + `<svg class="ar ra" viewBox="0 0 200 200">${ALCH.a}</svg><svg class="ar rb" viewBox="0 0 200 200">${ALCH.B[0]}</svg><svg class="ar rc" viewBox="0 0 200 200">${ALCH.c}</svg>`
-  + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><div class="asp">${ALCH.sparks}</div></div>`;
+  + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><i class="asp" style="${ALCH.sparks}"></i></div>`;
 // Luma redraws the board without touching each panel's running neon scene: the panel element and its .lfx stay, everything else
 // in the panel is swapped for the freshly built version. (Used for every full redraw once the scenes exist, e.g. each commander-damage tap.)
 let panelSig = [];                          // the markup each panel was last drawn from (emptied whenever the board changes some other way)
@@ -1265,7 +1279,20 @@ function firePulse(el, up) {              // Luma: a pulse of light leaves the n
 }
 function fireBurst(el, up) {              // restart the burst of energy on this panel (up = life went up, otherwise it went down)
   const fx = el.querySelector('.afx'); if (!fx) return;
-  fx.classList.remove('bu', 'bd'); void fx.offsetWidth; fx.classList.add(up ? 'bu' : 'bd');
+  const ab = fx.querySelector('.ab'), af = fx.querySelector('.af'), sp = fx.querySelector('.asp');
+  if (!ab.animate) { fx.classList.remove('bu', 'bd'); void fx.offsetWidth; fx.classList.add(up ? 'bu' : 'bd'); return; }
+  // played straight on the three burst pieces: a class on the whole scene made the browser re-check every ring shape on each tap
+  fx.classList.remove('bu', 'bd');
+  [ab, af, sp].forEach(n => n.classList.toggle('dn', !up));
+  if (up) {
+    ab.animate([{ opacity:.95, transform:'scale(.45)' }, { opacity:0, transform:'scale(2.15)' }], { duration:800, easing:'cubic-bezier(.15,.7,.3,1)' });
+    af.animate([{ opacity:1, transform:'scale(.5)' }, { opacity:0, transform:'scale(1.5)' }], { duration:550, easing:'ease-out' });
+    sp.animate([{ opacity:1, transform:'scale(.12)' }, { opacity:.9, offset:.6 }, { opacity:0, transform:'scale(1)' }], { duration:850, easing:'ease-out' });
+  } else {
+    ab.animate([{ opacity:.9, transform:'scale(1.7)' }, { opacity:0, transform:'scale(.4)' }], { duration:600, easing:'cubic-bezier(.5,0,.8,.4)' });
+    af.animate([{ opacity:.8, transform:'scale(1.3)' }, { opacity:0, transform:'scale(.6)' }], { duration:500, easing:'ease-out' });
+    sp.animate([{ opacity:0, transform:'scale(1)' }, { opacity:1, offset:.3 }, { opacity:0, transform:'scale(.1)' }], { duration:700, easing:'ease-in' });
+  }
 }
 const ledHtml = i => {
   let leds = '';
