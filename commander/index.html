@@ -1206,12 +1206,26 @@ const lumaFx = (i, burst = '') => {
       bg.push(`radial-gradient(circle ${(r * 1.8).toFixed(1)}px at ${Math.round(rnd() * 94 + 3)}% ${Math.round(rnd() * 94 + 3)}%, rgba(${c},${o}) 0, rgba(${c},${o}) 50%, rgba(${c},0) 100%)`);
     }
     return bg.join(','); };
-  return `<div class="lfx${burst}" aria-hidden="true"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
+  return `<div class="lfx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
     + `<span class="lpt"><i class="da" style="background-image:${layer(7)}"></i><i class="db" style="background-image:${layer(6)}"></i></span><span class="lglow"></span></div>`;
 };
 const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true"><span class="aglow"></span><span class="abeam"></span>`
   + `<svg class="ar ra" viewBox="0 0 200 200">${ALCH.a}</svg><svg class="ar rb" viewBox="0 0 200 200">${ALCH.B[0]}</svg><svg class="ar rc" viewBox="0 0 200 200">${ALCH.c}</svg>`
   + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><div class="asp">${ALCH.sparks}</div></div>`;
+// Luma redraws the board without touching each panel's running neon scene: the panel element and its .lfx stay, everything else
+// in the panel is swapped for the freshly built version. (Used for every full redraw once the scenes exist, e.g. each commander-damage tap.)
+function syncBoard(board, html) {
+  const tmp = document.createElement('div'); tmp.innerHTML = html;
+  [...board.children].forEach((pn, i) => {
+    const nw = tmp.children[i], fx = pn.querySelector(':scope > .lfx'), slot = nw.querySelector(':scope > .lfxslot');
+    pn.className = nw.className; pn.setAttribute('style', nw.getAttribute('style'));
+    [...pn.children].forEach(c => { if (c !== fx) c.remove(); });
+    let before = true;
+    [...nw.children].forEach(c => { if (c === slot) { before = false; return; } if (before) pn.insertBefore(c, fx); else pn.appendChild(c); });
+    const b = slot ? (slot.dataset.b || '').trim() : '';
+    fx.classList.remove('pu', 'pd'); if (b) { void fx.offsetWidth; fx.classList.add(b); }
+  });
+}
 let sceneToken = 0;
 function fillScene() {
   const my = ++sceneToken; let k = 0;
@@ -1344,13 +1358,16 @@ function render() {
   const board = document.getElementById('board');
   // Fast path (v38): in the life and poison views a tap only changes numbers and a few classes, so those are updated in
   // place and the panels (with their running animations) are left alone. Anything structural rebuilds the whole board.
+  let keepScene = false;
   const boardKey = JSON.stringify([settings.theme, s.pal, s.c, s.p, settings.poison, settings.partners, settings.players, winner, champShow ? champ : -1]);
   if (!s.c && boardKey === lastBoardKey && board.children.length === COLORS.length) patchBoard(deadNow);
   else { lastBoardKey = boardKey;
   // --ph (seconds since the page opened) is only refreshed when the panels are rebuilt: the running animations use it as a
   // negative delay, so changing it under panels that stay in place would make every animation jump ahead on each tap
   document.documentElement.style.setProperty('--ph', (performance.now() / 1000).toFixed(2) + 's');
-  board.innerHTML = PAL.map((p, i) => {
+  // Luma: if every panel already has its neon scene running, the redraw keeps those scenes and swaps only the rest of each panel
+  keepScene = settings.theme === 'luma' && board.children.length === COLORS.length && [...board.children].every(pn => pn.querySelector(':scope > .lfx'));
+  const boardHtml = PAL.map((p, i) => {
     const dead = isDead(i), vac = empty(i);
     const cls = 'panel' + (vac ? ' empty' : '') + (i < 2 ? ' flip' : '') + (dead ? ' dead' : '') + (!dead && s.life[i] <= LOW ? ' low' : '')
       + (winner === i ? ' pick final' : '') + (champShow && champ === i ? ' champ' : '') + (s.p ? ' ps' : '') + (!vac && s.life[i] >= BLAZE_AT ? ' blaze' : '');
@@ -1405,9 +1422,10 @@ function render() {
       }).join('');
       body = `<div class="seats">${seats}</div>`;
     }
-    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' && !s.c ? `<span class="lfxslot" data-b="${ lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
-  }).join(''); }
-  if (settings.theme === 'luma' && !s.c) fillScene();
+    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
+  }).join('');
+  if (keepScene) syncBoard(board, boardHtml); else board.innerHTML = boardHtml; }
+  if (settings.theme === 'luma' && !keepScene) fillScene();
   document.getElementById('cbtn').classList.toggle('on', s.c);
   document.getElementById('dbtn').classList.toggle('on', s.p);
   paintDeltas();
