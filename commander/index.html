@@ -767,7 +767,7 @@
   @keyframes lfloat { to { transform:translateY(-50%); } }
   /* the number itself: a hot neon tube with a pink and a cyan fringe */
   html[data-theme="luma"] .life .num { text-shadow:-1px 0 rgba(255,70,210,.45), 1px 0 rgba(70,240,255,.4), 0 0 3px #fff, 0 0 12px rgba(var(--rgb),.95), 0 0 26px rgba(var(--rgb),.8), 0 0 50px rgba(var(--rgb),.55); }
-  html[data-theme="luma"] .panel.dead .lfx { display:none; }
+  html[data-theme="luma"] .panel.dead .lfx > :not(.halo) { display:none; }   /* the spinning rings live in the scene now (so they keep running through commander damage) and stay on a dead panel as before */
 
   /* ================= theme: Alchemy (dark charcoal, antique gold, glowing amber; every player is one of the metals) ================= */
   html[data-theme="alchemy"]{ --bg:#0d0b09; --ink:#f3e6c4; --peach:#e4c98a; --yellow:#f0b84a;
@@ -1208,7 +1208,7 @@ const lumaFx = (i, burst = '') => {
       bg.push(`radial-gradient(circle ${(r * 1.8).toFixed(1)}px at ${Math.round(rnd() * 94 + 3)}% ${Math.round(rnd() * 94 + 3)}%, rgba(${c},${o}) 0, rgba(${c},${o}) 50%, rgba(${c},0) 100%)`);
     }
     return bg.join(','); };
-  return `<div class="lfx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
+  return `<div class="lfx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="laura"></span><span class="halo">${ARCANE}</span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
     + `<span class="lpt"><i class="da" style="background-image:${layer(7)}"></i><i class="db" style="background-image:${layer(6)}"></i></span><span class="lglow"></span></div>`;
 };
 const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="aglow"></span><span class="abeam"></span>`
@@ -1404,7 +1404,7 @@ function render() {
         <div class="psub">&hearts; ${s.life[i]}</div>
       </div>`;
     } else if (!s.c) {
-      body = `<div class="life"><span class="halo">${ARCANE}</span>
+      body = `<div class="life">${settings.theme === 'luma' ? '' : `<span class="halo">${ARCANE}</span>`}
         <button class="big" data-a="life" data-i="${i}" data-d="-1">&minus;</button>
         <div class="num${lifePop}">${s.life[i]}</div>
         <button class="big" data-a="life" data-i="${i}" data-d="1">+</button>
