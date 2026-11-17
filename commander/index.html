@@ -457,6 +457,11 @@
   @keyframes beat { 0%,100% { transform:scale(1); } 14% { transform:scale(1.07); } 28% { transform:scale(1); } 42% { transform:scale(1.045); } 56% { transform:scale(1); } }
   /* +/- circles squeeze when pressed */
   html[data-theme="luma"] .big::before { transition:background .15s, transform .12s, box-shadow .12s; }
+  /* the + and − are drawn rather than typed, so they sit dead centre in the ring whatever font the phone has */
+  html[data-theme="luma"] .big { font-size:0; }
+  html[data-theme="luma"] .big::after { content:""; position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px 0 0 -8px; pointer-events:none; color:#fff;
+    background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat; filter:drop-shadow(0 0 4px rgba(var(--rgb),.95)); }
+  html[data-theme="luma"] .big[data-d="1"]::after { background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat, linear-gradient(currentColor,currentColor) center/2px 100% no-repeat; }
   html[data-theme="luma"] .big:active::before { transform:scale(.88); box-shadow:0 0 22px rgba(var(--rgb),.95), inset 0 0 14px rgba(var(--rgb),.5); }
   /* the roulette winner sends out glowing pulses */
   html[data-theme="luma"] .panel.final .veil { animation:winpulse 1.3s ease-out infinite; }
