@@ -1209,21 +1209,25 @@ const lumaFx = (i, burst = '') => {
   return `<div class="lfx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="laura"></span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
     + `<span class="lpt"><i class="da" style="background-image:${layer(7)}"></i><i class="db" style="background-image:${layer(6)}"></i></span><span class="lglow"></span></div>`;
 };
-const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true"><span class="aglow"></span><span class="abeam"></span>`
+const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="aglow"></span><span class="abeam"></span>`
   + `<svg class="ar ra" viewBox="0 0 200 200">${ALCH.a}</svg><svg class="ar rb" viewBox="0 0 200 200">${ALCH.B[0]}</svg><svg class="ar rc" viewBox="0 0 200 200">${ALCH.c}</svg>`
   + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><div class="asp">${ALCH.sparks}</div></div>`;
 // Luma redraws the board without touching each panel's running neon scene: the panel element and its .lfx stay, everything else
 // in the panel is swapped for the freshly built version. (Used for every full redraw once the scenes exist, e.g. each commander-damage tap.)
+let panelSig = [];                          // the markup each panel was last drawn from (emptied whenever the board changes some other way)
 function syncBoard(board, html) {
   const tmp = document.createElement('div'); tmp.innerHTML = html;
+  board.querySelectorAll('.delta').forEach(d => d.remove());   // paintDeltas() draws the running totals again
   [...board.children].forEach((pn, i) => {
-    const nw = tmp.children[i], fx = pn.querySelector(':scope > .lfx'), slot = nw.querySelector(':scope > .lfxslot');
+    const nw = tmp.children[i], fx = pn.querySelector(':scope > .lfx, :scope > .afx'), slot = nw.querySelector(':scope > .lfxslot');
+    const b = slot ? (slot.dataset.b || '').trim() : '', sig = nw.outerHTML;
+    if (panelSig[i] === sig && !b) return;                    // this panel would come out exactly the same: don't touch it
+    panelSig[i] = sig;
     pn.className = nw.className; pn.setAttribute('style', nw.getAttribute('style'));
     [...pn.children].forEach(c => { if (c !== fx) c.remove(); });
     let before = true;
     [...nw.children].forEach(c => { if (c === slot) { before = false; return; } if (before) pn.insertBefore(c, fx); else pn.appendChild(c); });
-    const b = slot ? (slot.dataset.b || '').trim() : '';
-    fx.classList.remove('pu', 'pd'); if (b) { void fx.offsetWidth; fx.classList.add(b); }
+    fx.classList.remove('pu', 'pd', 'bu', 'bd'); if (b) { void fx.offsetWidth; fx.classList.add(b); }
   });
 }
 let sceneToken = 0;
@@ -1258,6 +1262,7 @@ const ledHtml = i => {
 };
 let lastBoardKey = '', prevBlaze = null;
 function patchBoard(deadNow) {
+  panelSig = [];
   const panels = document.getElementById('board').children;
   for (let i = 0; i < COLORS.length; i++) {
     if (empty(i)) continue;
@@ -1366,7 +1371,8 @@ function render() {
   // negative delay, so changing it under panels that stay in place would make every animation jump ahead on each tap
   document.documentElement.style.setProperty('--ph', (performance.now() / 1000).toFixed(2) + 's');
   // Luma: if every panel already has its neon scene running, the redraw keeps those scenes and swaps only the rest of each panel
-  keepScene = settings.theme === 'luma' && board.children.length === COLORS.length && [...board.children].every(pn => pn.querySelector(':scope > .lfx'));
+  keepScene = (settings.theme === 'luma' || settings.theme === 'alchemy') && board.children.length === COLORS.length
+    && [...board.children].every(pn => pn.querySelector(settings.theme === 'luma' ? ':scope > .lfx' : ':scope > .afx'));
   const boardHtml = PAL.map((p, i) => {
     const dead = isDead(i), vac = empty(i);
     const cls = 'panel' + (vac ? ' empty' : '') + (i < 2 ? ' flip' : '') + (dead ? ' dead' : '') + (!dead && s.life[i] <= LOW ? ' low' : '')
@@ -1422,9 +1428,9 @@ function render() {
       }).join('');
       body = `<div class="seats">${seats}</div>`;
     }
-    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? alchemyFx(i, s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '') : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
+    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? (keepScene ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : ''}"></span>` : alchemyFx(i, s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '')) : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
   }).join('');
-  if (keepScene) syncBoard(board, boardHtml); else board.innerHTML = boardHtml; }
+  if (keepScene) syncBoard(board, boardHtml); else { board.innerHTML = boardHtml; panelSig = []; } }
   if (settings.theme === 'luma' && !keepScene) fillScene();
   document.getElementById('cbtn').classList.toggle('on', s.c);
   document.getElementById('dbtn').classList.toggle('on', s.p);
@@ -1476,7 +1482,7 @@ boardEl.addEventListener('click', e => {
 
 // one change from the player: ds = {a, i, j, d, k}; big = a long press (±10)
 function act(ds, big) {
-  winner = null; // the first change of the game clears the starting-player mark
+  clearWinner(); // the first change of the game clears the starting-player mark
   const a = ds.a, i = +ds.i, d = +ds.d;
   const before = (a === 'life' || a === 'cmd' || a === 'poison') ? snap() : null;
   if (a === 'life') {
@@ -1541,7 +1547,7 @@ resetBtn.addEventListener('pointerdown', e => {
   }, RESET_MS);
 });
 function doReset() {
-  const c = s.c; s = fresh(); s.c = c; winner = null; save(); skipDeltas = true; render(); deal();
+  const c = s.c; s = fresh(); s.c = c; clearWinner(); save(); skipDeltas = true; render(); deal();
   wipe();
   if (navigator.vibrate) navigator.vibrate([30, 40, 30]);
 }
@@ -1725,6 +1731,10 @@ function toc(final, a = out()) {          // final = the landing
 }
 
 // Starting player roulette: the veil hops around the table, slows down, and lands on a random player.
+function clearWinner() {                   // drop the starting-player mark: the state, its timer, and the glow on the panel itself
+  if (winner !== null) { clearTimeout(winnerTimer); setPick(-1, false); }
+  winner = null;
+}
 function setPick(k, final) {
   document.querySelectorAll('.panel').forEach((p, n) => {
     p.classList.toggle('pick', n === k);
@@ -1916,7 +1926,7 @@ let askN = 0;
 const gameTouched = () => s.life.some(v => v !== START) || s.cmd.some(r => r.some(q => q.some(v => v))) || s.poison.some(v => v);
 function setPlayers(n) {       // a different table size is a new game: the old numbers would make no sense
   settings.players = n; saveSettings();
-  const c = s.c; s = fresh(); s.c = c; winner = null; save();
+  const c = s.c; s = fresh(); s.c = c; clearWinner(); save();
   prevDead = null; prevAlive = COLORS.length; champ = -1; champShow = false; clearTimeout(champTimer);   // no death/champion sounds for the change itself
   skipDeltas = true; wipe(); syncSettingsUI(); render(); deal();
 }
@@ -1967,7 +1977,7 @@ function closeHistory() { histEl.classList.remove('open'); histEl.setAttribute('
 function undoLast() {
   const e = s.hist.pop(); if (!e) return;
   s.life = e.before.life.slice(); s.cmd = e.before.cmd.map(r => r.map(q => q.slice())); s.poison = (e.before.poison || s.poison.map(() => 0)).slice();
-  winner = null; sfx('cmdUndo'); save(); render(); renderHistory();
+  clearWinner(); sfx('cmdUndo'); save(); render(); renderHistory();
 }
 undoBtn.addEventListener('click', () => { audio(); undoLast(); });
 document.getElementById('closeHist').addEventListener('click', closeHistory);
