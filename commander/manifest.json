@@ -5,7 +5,7 @@
   "description": "Life tracker for Commander (MTG). Works offline.",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
   "background_color": "#07050f",
   "theme_color": "#07050f",

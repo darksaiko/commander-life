@@ -28,7 +28,9 @@
       radial-gradient(55% 34% at 50% 64%, rgba(255,90,170,.10), rgba(255,90,170,0) 100%),
       var(--bg); }
 
-  #board { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:10px; height:100dvh;
+  /* --appW/--appH: the app's size, set from JS. It only grows (or resets when the phone turns), so when Android's bars slide in over
+     the fullscreen app the layout stays put and the bar is simply drawn on top: no re-layout on every frame of the slide. */
+  #board { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:10px; width:var(--appW, auto); height:var(--appH, 100dvh);
     padding:max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
             max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
   /* landscape: use the full width (the camera sits in the gap between the panels) */
@@ -172,7 +174,7 @@
   }
 
   /* ---------- center controls ---------- */
-  #center { position:fixed; inset:0; margin:auto; width:max-content; height:max-content; display:flex; gap:8px; z-index:5;
+  #center { position:fixed; inset:0; right:calc(100vw - var(--appW, 100vw)); bottom:calc(100dvh - var(--appH, 100dvh)); margin:auto; width:max-content; height:max-content; display:flex; gap:8px; z-index:5;
     padding:6px; border-radius:999px; border:1.5px solid transparent;
     background:linear-gradient(#0b0818,#0b0818) padding-box,
                linear-gradient(90deg,#ff7a8f,#5cc8ff,#62ffb8,#c874ff) border-box;
@@ -192,7 +194,7 @@
     filter:drop-shadow(0 0 4px rgba(255,215,166,.9)); }
   #reset.holding { background:rgba(255,215,166,.18); box-shadow:0 0 16px rgba(255,215,166,.5); }
   #reset.holding .ring circle { stroke-dashoffset:0; transition:stroke-dashoffset 1s linear; }
-  #hint { position:fixed; left:50%; top:calc(50% + 40px); transform:translate(-50%,4px); z-index:6; pointer-events:none;
+  #hint { position:fixed; left:calc(var(--appW, 100vw) / 2); top:calc(var(--appH, 100dvh) / 2 + 40px); transform:translate(-50%,4px); z-index:6; pointer-events:none;
     font:600 11px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; letter-spacing:.04em; white-space:nowrap;
     padding:6px 11px; border-radius:999px; background:#0b0818; color:var(--peach);
     border:1px solid rgba(255,215,166,.7); box-shadow:0 0 12px rgba(255,215,166,.25);
@@ -1230,6 +1232,19 @@ function syncBoard(board, html) {
     fx.classList.remove('pu', 'pd', 'bu', 'bd'); if (b) { void fx.offsetWidth; fx.classList.add(b); }
   });
 }
+// The app's size: grows with the window, resets when the phone turns, and ignores the window shrinking for a moment
+// (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
+const appSize = { o:'', w:0, h:0 };
+function lockAppSize() {
+  const w = window.innerWidth, h = window.innerHeight, o = w > h ? 'l' : 'p';
+  if (o !== appSize.o) { appSize.o = o; appSize.w = w; appSize.h = h; }
+  else if (w <= appSize.w && h <= appSize.h) return;       // smaller: a bar is over the app, keep the layout as it is
+  else { appSize.w = Math.max(appSize.w, w); appSize.h = Math.max(appSize.h, h); }
+  document.documentElement.style.setProperty('--appW', appSize.w + 'px');
+  document.documentElement.style.setProperty('--appH', appSize.h + 'px');
+}
+lockAppSize();
+window.addEventListener('resize', lockAppSize);
 let sceneToken = 0;
 function fillScene() {
   const my = ++sceneToken; let k = 0;
