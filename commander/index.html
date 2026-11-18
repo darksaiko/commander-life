@@ -1249,13 +1249,19 @@ function syncBoard(board, html) {
 // The app's size: grows with the window, resets when the phone turns, and ignores the window shrinking for a moment
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
+let appSizeTimer = 0;
 function lockAppSize() {
   const w = window.innerWidth, h = window.innerHeight, o = w > h ? 'l' : 'p';
-  if (o !== appSize.o) { appSize.o = o; appSize.w = w; appSize.h = h; }
-  else if (w <= appSize.w && h <= appSize.h) return;       // smaller: a bar is over the app, keep the layout as it is
-  else { appSize.w = Math.max(appSize.w, w); appSize.h = Math.max(appSize.h, h); }
-  document.documentElement.style.setProperty('--appW', appSize.w + 'px');
-  document.documentElement.style.setProperty('--appH', appSize.h + 'px');
+  clearTimeout(appSizeTimer);
+  // Only a phone's system bar sliding over the app is ignored: a touch screen, same orientation, the window a little smaller
+  // (under 120px). Anything else, like resizing a desktop window, is followed right away. If a "bar" shrink is still there
+  // after a moment, it wasn't a bar, so follow it then.
+  const barLike = o === appSize.o && w <= appSize.w && h <= appSize.h && (appSize.w - w) + (appSize.h - h) < 120
+    && window.matchMedia && matchMedia('(pointer: coarse)').matches;
+  if (barLike) { appSizeTimer = setTimeout(() => { appSize.o = ''; lockAppSize(); }, 4000); return; }
+  appSize.o = o; appSize.w = w; appSize.h = h;
+  document.documentElement.style.setProperty('--appW', w + 'px');
+  document.documentElement.style.setProperty('--appH', h + 'px');
 }
 lockAppSize();
 window.addEventListener('resize', lockAppSize);
