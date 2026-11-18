@@ -340,6 +340,7 @@
   }
   .sh-foot { border-top:1px solid var(--sh-sep); padding:10px 0 8px; text-align:center; font-size:12px; opacity:.8; letter-spacing:.02em; }
   .sh-foot a { color:var(--sh-ink); text-decoration:underline; text-underline-offset:2px; }
+  .hbtn.fsb { flex:none; min-width:96px; padding:0 16px; }
   .sh-foot .ver { margin-left:8px; font-variant-numeric:tabular-nums; }
   .sh-foot .ver i { font-style:normal; opacity:.6; }
   .sh-foot .ver b { font-weight:inherit; color:var(--sh-acc); }
@@ -980,7 +981,7 @@
     <label class="sh-row"><span>Style</span><select id="themeSel"></select></label>
     <div class="sh-row"><span>Sound</span><button id="soundBtn" class="switch" role="switch" aria-checked="true" aria-label="Sound"><i></i></button></div>
     <div class="sh-row"><span>Reduce animations</span><button id="calmBtn" class="switch" role="switch" aria-checked="false" aria-label="Reduce animations"><i></i></button></div>
-    <div class="sh-row" id="fsRow"><span>Fullscreen</span><button id="fsBtn" class="switch" role="switch" aria-checked="false" aria-label="Fullscreen"><i></i></button></div>
+    <div class="sh-row" id="fsRow"><span>Fullscreen</span><button id="fsBtn" class="hbtn fsb">Enter</button></div>
     </section>
     <section class="sh-col">
     <div class="sh-group">Game</div>
@@ -1259,7 +1260,7 @@ function syncBoard(board, html) {
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
 // ---- version in the settings footer, plus a note when a newer version has downloaded in the background ----
-const APP_VERSION = 'v71';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
+const APP_VERSION = 'v72';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
 function showVersion(ready) {
   const el = document.getElementById('ver'); if (!el) return;
   el.innerHTML = `<i>${APP_VERSION}</i>` + (ready && ready !== APP_VERSION ? ` <i>&middot;</i> <b>${ready} ready, reopen to update</b>` : '');
@@ -1936,14 +1937,13 @@ const THEMES = {
     { acc:'#9cf5ff', rgb:'156,245,255', c:'#22b5c4', d:'#12707a' },
     { acc:'#ffa8d9', rgb:'255,168,217', c:'#d94fa0', d:'#8e2c66' } ] }
 };
-const settings = { theme:'luma', sound:true, partners:false, calm:false, poison:false, players:4, cmdMode:'received', fs:false };
+const settings = { theme:'luma', sound:true, partners:false, calm:false, poison:false, players:4, cmdMode:'received' };
 try {
   const x = JSON.parse(localStorage.getItem(SKEY));
   if (x && THEMES[x.theme]) settings.theme = x.theme;
   if (x && x.sound === false) settings.sound = false;
   if (x && x.partners === true) settings.partners = true;
   if (x && x.calm === true) settings.calm = true;
-  if (x && x.fs === true) settings.fs = true;
   if (x && x.poison === true) settings.poison = true;
   if (x && (x.players === 2 || x.players === 3)) settings.players = x.players;
   if (x && x.cmdMode === 'dealt') settings.cmdMode = 'dealt';
@@ -2022,25 +2022,21 @@ document.getElementById('cmdSeg').addEventListener('click', e => {
 });
 calmBtn.addEventListener('click', () => { settings.calm = !settings.calm; saveSettings(); syncSettingsUI(); applyTheme(); });
 
-// ---- fullscreen (hides the status and nav bars). The browser only allows it from a tap, so when it's on, the app goes back
-// into fullscreen on the first tap after it's opened (or after coming back to it). Hidden where it isn't supported (iPhone).
+// ---- fullscreen button (hides the status and nav bars). Nothing is saved: the label always shows what the browser says right
+// now, so after minimizing (which drops fullscreen) it reads "Enter" again. Hidden where fullscreen isn't supported (iPhone).
 const fsBtn = document.getElementById('fsBtn');
 const fsOK = !!(document.documentElement.requestFullscreen && document.fullscreenEnabled);
-let fsArmed = true;
-function syncFs() { fsBtn.setAttribute('aria-checked', String(!!settings.fs)); }
-function enterFs() { if (!document.fullscreenElement) document.documentElement.requestFullscreen({ navigationUI:'hide' }).catch(() => {}); }
+function syncFs() { fsBtn.textContent = document.fullscreenElement ? 'Exit' : 'Enter'; }
 if (!fsOK) document.getElementById('fsRow').style.display = 'none';
 else {
   syncFs();
   fsBtn.addEventListener('click', () => {
-    settings.fs = !settings.fs; saveSettings(); syncFs(); fsArmed = false;
-    if (settings.fs) enterFs(); else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else document.documentElement.requestFullscreen({ navigationUI:'hide' }).catch(() => {});
   });
-  // pointerup, not pointerdown: on a touch screen only the lift of the finger counts as a tap the browser trusts for fullscreen
-  window.addEventListener('pointerup', () => { if (fsArmed && settings.fs) { fsArmed = false; enterFs(); } }, true);
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') fsArmed = true; });
+  document.addEventListener('visibilitychange', syncFs);
   // entering or leaving fullscreen is a real size change, not a bar sliding over the app: follow it straight away
-  document.addEventListener('fullscreenchange', () => requestAnimationFrame(() => { appSize.o = ''; lockAppSize(); }));
+  document.addEventListener('fullscreenchange', () => { syncFs(); requestAnimationFrame(() => { appSize.o = ''; lockAppSize(); }); });
 }
 document.getElementById('closeSet').addEventListener('click', closeSettings);
 setEl.addEventListener('click', e => { if (e.target === setEl && Date.now() - setOpenedAt > 400) closeSettings(); });
