@@ -1259,7 +1259,7 @@ function syncBoard(board, html) {
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
 // ---- version in the settings footer, plus a note when a newer version has downloaded in the background ----
-const APP_VERSION = 'v70';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
+const APP_VERSION = 'v71';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
 function showVersion(ready) {
   const el = document.getElementById('ver'); if (!el) return;
   el.innerHTML = `<i>${APP_VERSION}</i>` + (ready && ready !== APP_VERSION ? ` <i>&middot;</i> <b>${ready} ready, reopen to update</b>` : '');
