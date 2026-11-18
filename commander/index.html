@@ -340,6 +340,9 @@
   }
   .sh-foot { border-top:1px solid var(--sh-sep); padding:10px 0 8px; text-align:center; font-size:12px; opacity:.8; letter-spacing:.02em; }
   .sh-foot a { color:var(--sh-ink); text-decoration:underline; text-underline-offset:2px; }
+  .sh-foot .ver { margin-left:8px; font-variant-numeric:tabular-nums; }
+  .sh-foot .ver i { font-style:normal; opacity:.6; }
+  .sh-foot .ver b { font-weight:inherit; color:var(--sh-acc); }
   @media (max-height:360px) { .sh-row { min-height:44px; } .sh-foot { padding:7px 0 5px; } }
   html[data-theme="pixel"] .seat button { padding:2px 0 0 2px; }
 
@@ -986,7 +989,7 @@
     <div class="sh-row"><span>Poison counters</span><button id="poisonBtn" class="switch" role="switch" aria-checked="false" aria-label="Poison counters"><i></i></button></div>
     </section>
     </div>
-    <div class="sh-foot">&copy; AlpacaSoft and <a href="https://instagram.com/darksaiko" target="_blank" rel="noopener noreferrer">Saiko</a></div>
+    <div class="sh-foot">&copy; AlpacaSoft and <a href="https://instagram.com/darksaiko" target="_blank" rel="noopener noreferrer">Saiko</a><span class="ver" id="ver"></span></div>
   </div>
 </div>
 
@@ -1254,6 +1257,23 @@ function syncBoard(board, html) {
 // The app's size: grows with the window, resets when the phone turns, and ignores the window shrinking for a moment
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
+// ---- version in the settings footer, plus a note when a newer version has downloaded in the background ----
+const APP_VERSION = 'v68';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
+function showVersion(ready) {
+  const el = document.getElementById('ver'); if (!el) return;
+  el.innerHTML = `<i>${APP_VERSION}</i>` + (ready && ready !== APP_VERSION ? ` <i>&middot;</i> <b>${ready} ready, reopen to update</b>` : '');
+}
+showVersion();
+if ('serviceWorker' in navigator) {
+  // the offline worker answers with the version it holds; once a newer one has taken over, this page is the old copy
+  const askWorker = () => {
+    const w = navigator.serviceWorker.controller; if (!w || !window.MessageChannel) return;
+    const ch = new MessageChannel(); ch.port1.onmessage = e => { if (e.data && e.data.version) showVersion(e.data.version); };
+    w.postMessage({ type:'version' }, [ch.port2]);
+  };
+  navigator.serviceWorker.addEventListener('controllerchange', askWorker);
+  navigator.serviceWorker.ready.then(reg => { askWorker(); reg.update().catch(() => {}); }).catch(() => {});
+}
 let appSizeTimer = 0;
 function lockAppSize() {
   const w = window.innerWidth, h = window.innerHeight, o = w > h ? 'l' : 'p';

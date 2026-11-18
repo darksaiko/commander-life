@@ -1,6 +1,6 @@
 // Commander Life service worker: caches the app so it opens with no internet.
 // When you upload a new version of the app, change VERSION so phones pick it up.
-const VERSION = 'v67';
+const VERSION = 'v68';
 const CACHE = 'commander-life-' + VERSION;
 const DOOM_CACHE = 'commander-doom-v4';   // bump this name whenever the doom/ files change
 const FILES = [
@@ -23,6 +23,11 @@ self.addEventListener('activate', e => {
       .then(keys => Promise.all(keys.filter(k => (k.startsWith('commander-life-') && k !== CACHE) || (k.startsWith('commander-doom-') && k !== DOOM_CACHE)).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+// The page asks which version this worker holds (shown in the settings footer, with a note when a newer one is ready)
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'version' && e.ports && e.ports[0]) e.ports[0].postMessage({ version: VERSION });
 });
 
 // Cache first (instant + offline), refresh the cache in the background for next time.
