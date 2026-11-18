@@ -8,7 +8,12 @@ LIVE=/home/alpacaqr/public_html/commander
 LOG=/home/alpacaqr/deploy-commander.log
 cd "$REPO" || exit 1
 
-git fetch -q origin main 2>>"$LOG" || { echo "$(date '+%F %T') fetch failed" >> "$LOG"; exit 1; }
+# Only one run at a time: if a previous run is still going (say GitHub is slow), this one just skips.
+if command -v flock >/dev/null 2>&1; then exec 9>/home/alpacaqr/.deploy-commander.lock; flock -n 9 || exit 0; fi
+# Never let a check hang: give up on GitHub after 60 seconds and try again on the next run.
+T=""; command -v timeout >/dev/null 2>&1 && T="timeout 60"
+
+$T git fetch -q origin main 2>>"$LOG" || { echo "$(date '+%F %T') fetch failed" >> "$LOG"; exit 1; }
 [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] && exit 0   # nothing new
 
 git reset -q --hard origin/main && /bin/mkdir -p "$LIVE" && /bin/cp -Rf commander/. "$LIVE"/ \
