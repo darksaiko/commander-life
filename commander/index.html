@@ -787,7 +787,7 @@
   html[data-theme="luma"] .panel.dead .lfx > :not(.halo) { display:none; }   /* the spinning rings live in the scene now (so they keep running through commander damage) and stay on a dead panel as before */
 
 
-  /* ================= theme: World on Fire (charred red panels, flames in each seat's colour) ================= */
+  /* ================= theme: Worldfire (charred red panels, flames in each seat's colour) ================= */
   html[data-theme="fire"]{ --bg:#0d0202; --ink:#fff0e0; --peach:#ffb07a; --yellow:#ffd23a;
      --sh-bg:#1a0605; --sh-ink:#ffe9d6; --sh-line:rgba(255,90,50,.55); --sh-acc:#ff5a2a; --sh-sep:rgba(255,90,50,.2); --sh-glow:rgba(255,70,30,.18); --sh-r:14px; color-scheme:dark; }
   html[data-theme="fire"] body { background:radial-gradient(90% 80% at 50% 110%, #3a0806, #120303 60%, #070101); }
@@ -1318,7 +1318,7 @@ const lumaFx = (i, burst = '') => {
   return `<div class="lfx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="laura"></span><span class="halo">${ARCANE}</span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
     + `<span class="lpt"><i class="da" style="background-image:${layer(13)}"></i></span><span class="lglow"></span></div>`;
 };
-// ---- World on Fire: three rows of flame tongues along the bottom (dark red at the back, orange, then the seat's colour in front),
+// ---- Worldfire: three rows of flame tongues along the bottom (dark red at the back, orange, then the seat's colour in front),
 // each flickering on its own, a breathing heat glow, and embers drifting up. All transform/opacity; the flames are built once. ----
 const FIRE = (() => {
   const row = (seed, n, hMin, hMax) => { let s = seed; const r = () => (s = (s * 16807) % 2147483647) / 2147483647; let d = '';
@@ -1371,7 +1371,7 @@ function syncBoard(board, html) {
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
 // ---- version in the settings footer, plus a note when a newer version has downloaded in the background ----
-const APP_VERSION = 'v74';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
+const APP_VERSION = 'v75';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
 function showVersion(ready) {
   const el = document.getElementById('ver'); if (!el) return;
   el.innerHTML = `<i>${APP_VERSION}</i>` + (ready && ready !== APP_VERSION ? ` <i>&middot;</i> <b>${ready} ready, reopen to update</b>` : '');
@@ -2039,7 +2039,7 @@ const THEMES = {
     { acc:'#9ccf6a', rgb:'156,207,106', c:'#1c2a0e', d:'#0a1105', sig:'<circle cx="12" cy="9" r="5.5"/><path d="M12 14.5V22M8.5 18.5h7"/>' },                         // copper  (Venus)
     { acc:'#5fd3d0', rgb:'95,211,208',  c:'#0b2a2a', d:'#051111', sig:'<circle cx="12" cy="12" r="4.5"/><path d="M7.5 3a4.5 4.5 0 0 0 9 0M12 16.5V22M9 19.5h6"/>' },     // mercury
     { acc:'#e47aa8', rgb:'228,122,168', c:'#301223', d:'#12060d', sig:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/>' } ] },                        // earth
-  fire: { label:'World on Fire', meta:'#120404', wave:'triangle', gain:.9, pool:[    // flame colours (index order must match POOL hues); panels stay red-black for everyone
+  fire: { label:'Worldfire', meta:'#120404', wave:'triangle', gain:.9, pool:[    // flame colours (index order must match POOL hues); panels stay red-black for everyone
     { acc:'#ff3b30', rgb:'255,59,48',   c:'#2a0907', d:'#120303' },   // crimson
     { acc:'#5ab8ff', rgb:'90,184,255',  c:'#22080a', d:'#100304' },   // blue flame (gas)
     { acc:'#4fe08a', rgb:'79,224,138',  c:'#22080a', d:'#100304' },   // green flame (copper)
