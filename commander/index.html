@@ -784,6 +784,86 @@
   html[data-theme="luma"] .life .num { text-shadow:-1px 0 rgba(255,70,210,.45), 1px 0 rgba(70,240,255,.4), 0 0 3px #fff, 0 0 12px rgba(var(--rgb),.95), 0 0 26px rgba(var(--rgb),.8), 0 0 50px rgba(var(--rgb),.55); }
   html[data-theme="luma"] .panel.dead .lfx > :not(.halo) { display:none; }   /* the spinning rings live in the scene now (so they keep running through commander damage) and stay on a dead panel as before */
 
+
+  /* ================= theme: World on Fire (charred red panels, flames in each seat's colour) ================= */
+  html[data-theme="fire"]{ --bg:#0d0202; --ink:#fff0e0; --peach:#ffb07a; --yellow:#ffd23a;
+     --sh-bg:#1a0605; --sh-ink:#ffe9d6; --sh-line:rgba(255,90,50,.55); --sh-acc:#ff5a2a; --sh-sep:rgba(255,90,50,.2); --sh-glow:rgba(255,70,30,.18); --sh-r:14px; color-scheme:dark; }
+  html[data-theme="fire"] body { background:radial-gradient(90% 80% at 50% 110%, #3a0806, #120303 60%, #070101); }
+  html[data-theme="fire"] .panel { border-radius:16px; border:1.5px solid rgba(var(--rgb),.7);
+    background:radial-gradient(120% 90% at 50% 115%, rgba(255,70,20,.35), rgba(120,10,5,.15) 45%, rgba(0,0,0,0) 70%), linear-gradient(180deg, var(--d), var(--c));
+    box-shadow:0 0 18px rgba(255,50,20,.25), inset 0 0 0 1px rgba(0,0,0,.6); }
+  html[data-theme="fire"] .panel::before { border-color:rgba(255,120,60,.18); }
+  html[data-theme="fire"] .panel::after { box-shadow:inset 0 0 40px 6px rgba(255,40,20,.55); }
+  html[data-theme="fire"] .spark, html[data-theme="fire"] .halo, html[data-theme="fire"] .shine { display:none; }
+  .ffx { display:none; }
+  html[data-theme="fire"] .ffx { display:block; position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; border-radius:14.5px; }
+  html[data-theme="fire"] .ffx::after { content:""; position:absolute; left:0; right:0; bottom:0; height:3px; background:rgb(var(--rgb)); box-shadow:0 0 14px 3px rgba(var(--rgb),.75); opacity:.9; }
+  html[data-theme="fire"] .fglow { position:absolute; left:-10%; right:-10%; bottom:-30%; height:80%; border-radius:50%; will-change:opacity;
+    background:radial-gradient(closest-side, rgba(255,90,30,.55), rgba(255,40,10,.18) 55%, rgba(255,40,10,0));
+    animation:fglow 3.2s ease-in-out infinite; animation-delay:calc(var(--n) * -.8s - var(--ph)); }
+  @keyframes fglow { 0%,100% { opacity:.65; } 50% { opacity:1; } }
+  html[data-theme="fire"] .fls { position:absolute; left:0; right:0; bottom:0; height:50%; transform-origin:50% 100%; will-change:transform;
+    -webkit-mask-image:linear-gradient(to top, #000 35%, rgba(0,0,0,.55) 70%, transparent); mask-image:linear-gradient(to top, #000 35%, rgba(0,0,0,.55) 70%, transparent); }
+  html[data-theme="fire"] .fl { position:absolute; left:-4%; width:108%; bottom:0; height:100%; overflow:visible; transform-origin:50% 100%; will-change:transform;
+    animation:fflick 1.6s ease-in-out infinite alternate; animation-delay:calc(var(--n) * -.37s - var(--ph)); }
+  html[data-theme="fire"] .fl.f1 { animation-duration:1.9s; }
+  html[data-theme="fire"] .fl.f2 { height:85%; animation-duration:1.3s; animation-name:fflick2; }
+  html[data-theme="fire"] .fl.f3 { height:62%; animation-duration:1.05s; }
+  @media (orientation:portrait) { html[data-theme="fire"] .fls { height:32%; } html[data-theme="fire"] .panel.blaze .fls { height:55%; } }
+  html[data-theme="fire"] .fl.f1 path { fill:#a3140a; }
+  html[data-theme="fire"] .fl.f2 path { fill:#ff5418; }
+  html[data-theme="fire"] .fl.f3 path { fill:#ffc23a; }
+  html[data-theme="fire"] .fl.f1 { opacity:.85; }
+  html[data-theme="fire"] .fl.f2 { opacity:.85; }
+  html[data-theme="fire"] .fl.f3 { opacity:.8; }
+  /* a hot haze over the flames that blends the rows into one fire (static, inside the group) */
+  html[data-theme="fire"] .fls::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(255,230,150,.3), rgba(255,120,40,.08) 35%, rgba(255,60,20,0) 60%); }
+  @keyframes fflick  { 0% { transform:scaleY(.9) translateX(-1%); } 50% { transform:scaleY(1.08) translateX(.5%); } 100% { transform:scaleY(.96) translateX(1.2%); } }
+  @keyframes fflick2 { 0% { transform:scaleY(1.05) translateX(1%); } 50% { transform:scaleY(.9) translateX(-.8%); } 100% { transform:scaleY(1.1) translateX(-1.5%); } }
+  /* embers: one painted layer, two tiles tall, sliding up by one tile per loop */
+  html[data-theme="fire"] .fem { position:absolute; inset:0; overflow:hidden; }
+  html[data-theme="fire"] .fem i { position:absolute; left:0; right:0; top:0; height:200%; background-size:100% 50%; background-repeat:repeat-y; will-change:transform;
+    animation:fember 9s linear infinite; animation-delay:calc(var(--n) * -2.3s - var(--ph)); }
+  @keyframes fember { to { transform:translateY(-50%); } }
+  html[data-theme="fire"] .life .num { color:#fff4e6; text-shadow:0 0 6px rgba(255,200,120,.9), 0 0 18px rgba(255,90,30,.85), 0 0 34px rgba(255,40,10,.55); }
+  html[data-theme="fire"] .pop { animation:apop .45s cubic-bezier(.2,.9,.3,1.2); }
+  html[data-theme="fire"] .panel.low .life .num { color:#ffb08a; animation:aember 2.4s steps(1,end) infinite; animation-delay:calc(var(--ph) * -1); }
+  html[data-theme="fire"] .panel.low .life .num.pop { animation:apop .45s cubic-bezier(.2,.9,.3,1.2), aember 2.4s steps(1,end) .45s infinite; }
+  html[data-theme="fire"] .panel.low .fls { opacity:.55; }
+  /* out: the fire is out, only ash and a last glow */
+  html[data-theme="fire"] .panel.dead { filter:none; border-color:#3a2b28; background:linear-gradient(180deg,#120d0c,#1c1412); box-shadow:none; }
+  html[data-theme="fire"] .panel.dead .fls, html[data-theme="fire"] .panel.dead .fglow { display:none; }
+  html[data-theme="fire"] .panel.dead .fem i { filter:grayscale(1); opacity:.35; }
+  html[data-theme="fire"] .panel.dead .life .num { color:#7a6a64; text-shadow:none; animation:none; }
+  html[data-theme="fire"] .skull { font-size:0; top:12px; bottom:auto; left:0; right:0; transform:none; animation:none; opacity:1; text-align:center; }
+  html[data-theme="fire"] .skull::after { content:"BURNED OUT"; display:inline-block; font:700 11px/1 system-ui,sans-serif; letter-spacing:.3em; text-indent:.3em; color:#8d7770; }
+  /* 100 life or more: the whole panel goes up (taller, faster flames) */
+  html[data-theme="fire"] .panel.blaze { border-color:#ffb02a; box-shadow:0 0 26px rgba(255,120,30,.6), inset 0 0 40px rgba(255,120,30,.3); }
+  html[data-theme="fire"] .panel.blaze .fls { height:88%; }
+  html[data-theme="fire"] .panel.blaze .fl { animation-duration:.7s; }
+  html[data-theme="fire"] .panel.blaze .life .num { color:#fff7c2; text-shadow:0 0 8px #fff2a0, 0 0 22px rgba(255,170,40,.95), 0 0 44px rgba(255,80,20,.8); }
+  /* + and - drawn, centred */
+  html[data-theme="fire"] .big { font-size:0; color:#ffd9c2; }
+  html[data-theme="fire"] .big::before { border:1.5px solid rgba(var(--rgb),.85); background:rgba(20,3,2,.55); box-shadow:0 0 12px rgba(var(--rgb),.45); }
+  html[data-theme="fire"] .big:active::before { transform:scale(.9); background:rgba(var(--rgb),.25); box-shadow:0 0 20px rgba(var(--rgb),.8); }
+  html[data-theme="fire"] .big::after { content:""; position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px 0 0 -8px; pointer-events:none;
+    background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat; }
+  html[data-theme="fire"] .big[data-d="1"]::after { background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat, linear-gradient(currentColor,currentColor) center/2px 100% no-repeat; }
+  html[data-theme="fire"] .seat { background:rgba(0,0,0,.4); border:1px solid rgba(var(--ocrgb),.5); border-radius:12px; }
+  html[data-theme="fire"] .seat.me { background:transparent; border-color:transparent; }
+  html[data-theme="fire"] .seat button { color:#ffd9c2; border:1.2px solid rgba(var(--ocrgb),.7); background:rgba(20,3,2,.6); box-shadow:none; }
+  html[data-theme="fire"] .seat .n, html[data-theme="fire"] .seat .heart { color:#fff0e0; text-shadow:0 0 10px rgba(255,80,30,.6); }
+  html[data-theme="fire"] .pbtn { border-color:rgba(255,140,90,.6); color:#ffb48a; }
+  html[data-theme="fire"] .pbtn.on { background:rgba(255,80,30,.25); color:#fff; box-shadow:0 0 10px rgba(255,80,30,.5); }
+  html[data-theme="fire"] .delta.up { color:#ffd27a; text-shadow:0 0 12px rgba(255,170,40,.85); }
+  html[data-theme="fire"] .delta.down { color:#ff7a5a; text-shadow:0 0 12px rgba(255,60,30,.8); }
+  html[data-theme="fire"] .panel.final { border-color:#ffb02a; box-shadow:0 0 30px rgba(255,140,30,.6); }
+  html[data-theme="fire"] #center { background:linear-gradient(#2a0806,#140302); border:1.5px solid rgba(255,80,40,.7); border-radius:40px; padding:5px; box-shadow:0 0 22px rgba(255,60,20,.3), 0 0 0 5px #0d0202; }
+  html[data-theme="fire"] #center button { color:#ffd9c2; border-color:rgba(255,90,50,.6); background:rgba(20,3,2,.7); box-shadow:none; }
+  html[data-theme="fire"] #center button.on { background:rgba(255,80,30,.3); color:#fff; border-color:#ff5a2a; box-shadow:0 0 14px rgba(255,80,30,.6); }
+  html[data-theme="fire"] #hint { background:#1a0605; color:#ffe9d6; border-color:rgba(255,80,40,.7); }
+  html[data-theme="fire"] body.dealing .panel { animation:deal .75s cubic-bezier(.2,.9,.3,1.15) both; animation-delay:calc(var(--n) * 110ms); }
+
   /* ================= theme: Alchemy (dark charcoal, antique gold, glowing amber; every player is one of the metals) ================= */
   html[data-theme="alchemy"]{ --bg:#0d0b09; --ink:#f3e6c4; --peach:#e4c98a; --yellow:#f0b84a;
      --num:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',serif;
@@ -1235,6 +1315,34 @@ const lumaFx = (i, burst = '') => {
   return `<div class="lfx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="laura"></span><span class="halo">${ARCANE}</span><span class="lrip r1"></span><span class="lrip r2"></span><span class="lpulse"></span>`
     + `<span class="lpt"><i class="da" style="background-image:${layer(13)}"></i></span><span class="lglow"></span></div>`;
 };
+// ---- World on Fire: three rows of flame tongues along the bottom (dark red at the back, orange, then the seat's colour in front),
+// each flickering on its own, a breathing heat glow, and embers drifting up. All transform/opacity; the flames are built once. ----
+const FIRE = (() => {
+  const row = (seed, n, hMin, hMax) => { let s = seed; const r = () => (s = (s * 16807) % 2147483647) / 2147483647; let d = '';
+    for (let k = 0; k < n; k++) { const x = (k + .5) * 200 / n + (r() - .5) * 8, w = 200 / n * (.95 + r() * .55), h = hMin + Math.pow(r(), .8) * (hMax - hMin), lean = (r() - .5) * w * .9;
+      const f = v => v.toFixed(1);
+      d += `M${f(x - w / 2)} 60C${f(x - w / 2)} ${f(60 - h * .3)} ${f(x - w * .46 + lean * .3)} ${f(60 - h * .62)} ${f(x - w * .08 + lean * .8)} ${f(60 - h * .86)}`
+        + `Q${f(x + lean * 1.1)} ${f(60 - h * 1.02)} ${f(x + lean)} ${f(60 - h)}`
+        + `Q${f(x + w * .1 + lean)} ${f(60 - h * .8)} ${f(x + w * .38 + lean * .3)} ${f(60 - h * .55)}C${f(x + w * .5)} ${f(60 - h * .38)} ${f(x + w / 2)} ${f(60 - h * .2)} ${f(x + w / 2)} 60Z`; }
+    return d; };
+  return { back:row(11, 11, 24, 59), mid:row(47, 13, 14, 42), front:row(83, 15, 6, 22) };
+})();
+const fireFx = i => {
+  let seed = 3 + i * 97; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647, bg = [];
+  const cols = ['255,140,40', '255,200,80', '255,80,40', 'var(--rgb)'];
+  for (let k = 0; k < 12; k++) { const c = cols[k % 4], r = (.9 + rnd() * 1.2).toFixed(1), o = (.6 + rnd() * .4).toFixed(2);
+    bg.push(`radial-gradient(circle ${(r * 1.8).toFixed(1)}px at ${Math.round(rnd() * 94 + 3)}% ${Math.round(rnd() * 94 + 3)}%, rgba(${c},${o}) 0, rgba(${c},${o}) 50%, rgba(${c},0) 100%)`); }
+  const svg = (cls, d) => `<svg class="fl ${cls}" viewBox="0 0 200 60" preserveAspectRatio="none"><defs><filter id="fb${i}${cls}" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur stdDeviation="${cls === 'f1' ? 1.6 : 1.1}"/></filter></defs><path filter="url(#fb${i}${cls})" d="${d}"/></svg>`;
+  return `<div class="ffx" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="fglow"></span>`
+    + `<span class="fem"><i style="background-image:${bg.join(',')}"></i></span>`
+    + `<span class="fls">${svg('f1', FIRE.back)}${svg('f2', FIRE.mid)}${svg('f3', FIRE.front)}</span></div>`;
+};
+function fireFlare(el, up) {             // a life change: the flames leap up (gain) or gutter down (loss)
+  const f = el.querySelector('.ffx .fls'); if (!f || !f.animate) return;
+  f.animate(up ? [{ transform:'scaleY(1)' }, { transform:'scaleY(1.55)', offset:.3 }, { transform:'scaleY(1)' }]
+               : [{ transform:'scaleY(1)', opacity:1 }, { transform:'scaleY(.45)', opacity:.6, offset:.3 }, { transform:'scaleY(1)', opacity:1 }],
+            { duration:up ? 650 : 750, easing:'ease-out' });
+}
 const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="aglow"></span><span class="abeam"></span>`
   + `<svg class="ar ra" viewBox="0 0 200 200">${ALCH.a}</svg><svg class="ar rb" viewBox="0 0 200 200">${ALCH.B[0]}</svg><svg class="ar rc" viewBox="0 0 200 200">${ALCH.c}</svg>`
   + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><i class="asp" style="${ALCH.sparks}"></i></div>`;
@@ -1245,7 +1353,7 @@ function syncBoard(board, html) {
   const tmp = document.createElement('div'); tmp.innerHTML = html;
   board.querySelectorAll('.delta').forEach(d => d.remove());   // paintDeltas() draws the running totals again
   [...board.children].forEach((pn, i) => {
-    const nw = tmp.children[i], fx = pn.querySelector(':scope > .lfx, :scope > .afx'), slot = nw.querySelector(':scope > .lfxslot');
+    const nw = tmp.children[i], fx = pn.querySelector(':scope > .lfx, :scope > .afx, :scope > .ffx'), slot = nw.querySelector(':scope > .lfxslot');
     const b = slot ? (slot.dataset.b || '').trim() : '', sig = nw.outerHTML;
     if (panelSig[i] === sig && !b) return;                    // this panel would come out exactly the same: don't touch it
     panelSig[i] = sig;
@@ -1260,7 +1368,7 @@ function syncBoard(board, html) {
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
 // ---- version in the settings footer, plus a note when a newer version has downloaded in the background ----
-const APP_VERSION = 'v72';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
+const APP_VERSION = 'v73';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
 function showVersion(ready) {
   const el = document.getElementById('ver'); if (!el) return;
   el.innerHTML = `<i>${APP_VERSION}</i>` + (ready && ready !== APP_VERSION ? ` <i>&middot;</i> <b>${ready} ready, reopen to update</b>` : '');
@@ -1362,6 +1470,7 @@ function patchBoard(deadNow) {
         popNum(num, ' pop ' + (prev && s.life[i] < prev.life[i] ? 'pdn' : 'pup'));
         if (settings.theme === 'alchemy' && prev) fireBurst(el, s.life[i] > prev.life[i]);
         if (settings.theme === 'luma' && prev) firePulse(el, s.life[i] > prev.life[i]);
+        if (settings.theme === 'fire' && prev) fireFlare(el, s.life[i] > prev.life[i]);
       }
       // the little poison badge under the life total
       const badge = pBadge(i), old = life.querySelector('.pbadge');
@@ -1446,8 +1555,8 @@ function render() {
   // negative delay, so changing it under panels that stay in place would make every animation jump ahead on each tap
   document.documentElement.style.setProperty('--ph', (performance.now() / 1000).toFixed(2) + 's');
   // Luma: if every panel already has its neon scene running, the redraw keeps those scenes and swaps only the rest of each panel
-  keepScene = (settings.theme === 'luma' || settings.theme === 'alchemy') && board.children.length === COLORS.length
-    && [...board.children].every(pn => pn.querySelector(settings.theme === 'luma' ? ':scope > .lfx' : ':scope > .afx'));
+  keepScene = (settings.theme === 'luma' || settings.theme === 'alchemy' || settings.theme === 'fire') && board.children.length === COLORS.length
+    && [...board.children].every(pn => pn.querySelector(settings.theme === 'luma' ? ':scope > .lfx' : settings.theme === 'fire' ? ':scope > .ffx' : ':scope > .afx'));
   const boardHtml = PAL.map((p, i) => {
     const dead = isDead(i), vac = empty(i);
     const cls = 'panel' + (vac ? ' empty' : '') + (i < 2 ? ' flip' : '') + (dead ? ' dead' : '') + (!dead && s.life[i] <= LOW ? ' low' : '')
@@ -1503,7 +1612,7 @@ function render() {
       }).join('');
       body = `<div class="seats">${seats}</div>`;
     }
-    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'alchemy' ? (keepScene ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : ''}"></span>` : alchemyFx(i, s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '')) : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
+    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'fire' ? (keepScene ? '<span class="lfxslot" data-b=""></span>' : fireFx(i)) : ''}${settings.theme === 'alchemy' ? (keepScene ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : ''}"></span>` : alchemyFx(i, s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '')) : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
   }).join('');
   if (keepScene) syncBoard(board, boardHtml); else { board.innerHTML = boardHtml; panelSig = []; } }
   if (settings.theme === 'luma' && !keepScene) fillScene();
@@ -1927,6 +2036,15 @@ const THEMES = {
     { acc:'#9ccf6a', rgb:'156,207,106', c:'#1c2a0e', d:'#0a1105', sig:'<circle cx="12" cy="9" r="5.5"/><path d="M12 14.5V22M8.5 18.5h7"/>' },                         // copper  (Venus)
     { acc:'#5fd3d0', rgb:'95,211,208',  c:'#0b2a2a', d:'#051111', sig:'<circle cx="12" cy="12" r="4.5"/><path d="M7.5 3a4.5 4.5 0 0 0 9 0M12 16.5V22M9 19.5h6"/>' },     // mercury
     { acc:'#e47aa8', rgb:'228,122,168', c:'#301223', d:'#12060d', sig:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/>' } ] },                        // earth
+  fire: { label:'World on Fire', meta:'#120404', wave:'triangle', gain:.9, pool:[    // flame colours (index order must match POOL hues); panels stay red-black for everyone
+    { acc:'#ff3b30', rgb:'255,59,48',   c:'#2a0907', d:'#120303' },   // crimson
+    { acc:'#5ab8ff', rgb:'90,184,255',  c:'#22080a', d:'#100304' },   // blue flame (gas)
+    { acc:'#4fe08a', rgb:'79,224,138',  c:'#22080a', d:'#100304' },   // green flame (copper)
+    { acc:'#b56bff', rgb:'181,107,255', c:'#24080d', d:'#110305' },   // violet flame
+    { acc:'#ff8a1f', rgb:'255,138,31',  c:'#2a0d05', d:'#130502' },   // orange
+    { acc:'#ffd23a', rgb:'255,210,58',  c:'#2a1006', d:'#130602' },   // yellow
+    { acc:'#2fe0d0', rgb:'47,224,208',  c:'#22080a', d:'#100304' },   // teal flame
+    { acc:'#ff4fc8', rgb:'255,79,200',  c:'#26070f', d:'#110306' } ] },// magenta flame
   pixel:  { label:'8-bit',  meta:'#0a0a14', wave:'square',   gain:.9,   pool:[
     { acc:'#ff9aa2', rgb:'255,154,162', c:'#c8323c', d:'#8e1f2a' },
     { acc:'#8fc1ff', rgb:'143,193,255', c:'#2f63d8', d:'#1b3a8c' },
