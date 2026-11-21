@@ -402,7 +402,10 @@
   html[data-theme="forest"] .life .num { left:-6px; top:-2px; font-size:min(14.4vw,72px); font-weight:400; letter-spacing:.01em; color:#eafff4;
     -webkit-text-stroke:.5px rgba(232,255,243,.7);
     text-shadow:0 0 3px rgba(255,255,255,.55), 0 0 14px rgba(80,230,170,.65), 0 0 30px rgba(47,191,134,.4), 0 3px 6px rgba(0,0,0,.6); }
-  html[data-theme="forest"] .big { color:#c4f7de; text-shadow:0 0 8px rgba(80,230,170,.7); }
+  html[data-theme="forest"] .big { color:#c4f7de; text-shadow:0 0 8px rgba(80,230,170,.7); font-size:0; }
+  html[data-theme="forest"] .big::after { content:""; position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px 0 0 -8px; pointer-events:none;
+    background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat; filter:drop-shadow(0 0 4px rgba(80,230,170,.8)); }
+  html[data-theme="forest"] .big[data-d="1"]::after { background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat, linear-gradient(currentColor,currentColor) center/2px 100% no-repeat; }
   html[data-theme="forest"] .big::before { border:2px solid rgba(var(--rgb),.85); background:rgba(0,0,0,.2);
     box-shadow:0 0 10px rgba(var(--rgb),.45), inset 0 0 8px rgba(var(--rgb),.18); }
   html[data-theme="forest"] .big:active::before { background:rgba(var(--rgb),.3); }
@@ -594,8 +597,8 @@
      --sh-bg:#070909; --sh-ink:#f4f6f4; --sh-line:rgba(235,240,240,.5); --sh-acc:#8a9696; --sh-sep:rgba(235,240,240,.14);
      --sh-glow:rgba(235,240,240,.08); --sh-r:6px; color-scheme:dark; }
   html[data-theme="void"] body { background:#020303; }
-  html[data-theme="void"] .panel { border:1px solid rgba(235,240,240,.16); border-radius:8px; background:linear-gradient(180deg,#060808,#0b0e0e);
-    box-shadow:inset 0 0 60px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.8); }
+  html[data-theme="void"] .panel { border:1px solid rgba(var(--rgb),.55); border-radius:8px; background:linear-gradient(180deg,#060808,#0b0e0e);
+    box-shadow:inset 0 -2px 0 rgba(var(--rgb),.85), inset 0 -12px 16px -10px rgba(var(--rgb),.35), inset 0 0 60px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.8); }
   html[data-theme="void"] .panel::before { inset:6px; border-radius:5px; border:1px solid rgba(235,240,240,.08); z-index:1; }
   html[data-theme="void"] .panel::after { box-shadow:inset 0 0 44px 8px rgba(160,20,35,.55); }
   html[data-theme="void"] .panel.final { border-color:rgba(255,255,255,.85); box-shadow:inset 0 0 60px rgba(0,0,0,.9), 0 0 26px rgba(255,255,255,.35); }
@@ -605,8 +608,11 @@
   html[data-theme="void"] .spark { color:#e6eeee; text-shadow:0 0 8px rgba(230,240,240,.8); font-size:9px; opacity:.55; }
   html[data-theme="void"] .life .num { font-weight:300; letter-spacing:.01em; color:#fff;
     text-shadow:0 0 16px rgba(255,255,255,.55), 0 0 44px rgba(220,235,235,.3); }
-  html[data-theme="void"] .big { color:#e8eeee; text-shadow:none; }
-  html[data-theme="void"] .big::before { background:rgba(0,0,0,.55); border:1px solid rgba(235,240,240,.4); box-shadow:inset 0 0 12px rgba(0,0,0,.8); }
+  html[data-theme="void"] .big { color:#e8eeee; text-shadow:none; font-size:0; }
+  html[data-theme="void"] .big::after { content:""; position:absolute; left:50%; top:50%; width:15px; height:15px; margin:-7.5px 0 0 -7.5px; pointer-events:none;
+    background:linear-gradient(currentColor,currentColor) center/100% 1.5px no-repeat; }
+  html[data-theme="void"] .big[data-d="1"]::after { background:linear-gradient(currentColor,currentColor) center/100% 1.5px no-repeat, linear-gradient(currentColor,currentColor) center/1.5px 100% no-repeat; }
+  html[data-theme="void"] .big::before { background:rgba(0,0,0,.55); border:1px solid rgba(var(--rgb),.75); box-shadow:inset 0 0 12px rgba(0,0,0,.8); }
   html[data-theme="void"] .big:active::before { background:rgba(255,255,255,.16); box-shadow:0 0 18px rgba(255,255,255,.55); }
   html[data-theme="void"] .seat { background:rgba(0,0,0,.65); border:1px solid rgba(var(--ocrgb),.4); border-radius:6px; box-shadow:none; }
   html[data-theme="void"] .seat.me { background:transparent; border-color:transparent; }
@@ -614,7 +620,7 @@
   html[data-theme="void"] .seat .n, html[data-theme="void"] .seat .heart { color:#eef3f3; font-weight:300; text-shadow:0 0 10px rgba(255,255,255,.3); }
   html[data-theme="void"] .seat.lethal { border-color:#efe6c4; box-shadow:0 0 14px rgba(239,230,196,.3); }
   html[data-theme="void"] .seat .n.lethal { color:#efe6c4; text-shadow:0 0 10px rgba(239,230,196,.7); }
-  html[data-theme="void"] .seat button { border:1px solid rgba(235,240,240,.45); color:#e8eeee; box-shadow:none; }
+  html[data-theme="void"] .seat button { border:1px solid rgba(var(--ocrgb),.55); color:#e8eeee; box-shadow:none; }
   html[data-theme="void"] .seat button:active { background:rgba(255,255,255,.18); }
   html[data-theme="void"] .pbtn { border-color:rgba(235,240,240,.4); color:rgba(235,240,240,.8); }
   html[data-theme="void"] .pbtn.on { background:rgba(255,255,255,.14); color:#fff; box-shadow:none; }
@@ -635,10 +641,11 @@
 
   /* the living background of each panel (only built for the Void theme). Everything here moves with transforms and
      opacity only, so the phone's graphics chip does the work and taps never make it stutter */
-  .vfx { display:none; }
+  .vfx, .ofx { display:none; }
+  html[data-theme="forest"] .ofx { display:block; position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; border-radius:inherit; }
   html[data-theme="void"] .vfx { display:block; position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; border-radius:inherit; }
   .vfx .glow { position:absolute; left:50%; top:50%; height:155%; aspect-ratio:1; border-radius:50%;
-    background:radial-gradient(circle, rgba(205,214,214,.34) 0%, rgba(150,160,160,.15) 38%, rgba(0,0,0,0) 68%);
+    background:radial-gradient(circle, rgba(var(--rgb),.5) 0%, rgba(var(--rgb),.2) 38%, rgba(0,0,0,0) 68%);
     transform:translate(-50%,-50%); will-change:transform,opacity;
     animation:vglow 9s ease-in-out infinite; animation-delay:calc(var(--n) * -2.3s - var(--ph)); }
   @keyframes vglow { 0%,100% { transform:translate(-50%,-50%) scale(.9); opacity:.6; } 45% { transform:translate(-50%,-50%) scale(1.07); opacity:1; } 60% { opacity:.88; } }
@@ -1279,16 +1286,20 @@ const VOID_LAYOUT = [
    ['A', 'right:-4%;top:-8%',    200, 0,  104,'100% 0%',  18, 'alternate-reverse'],
    ['C', 'left:-10%;top:18%',    75,  1,  58, '0% 50%',   20, 'alternate']]
 ];
+// a placeholder in a redrawn panel where its running scene (kept from before) goes back
+const SLOT = '<span class="lfxslot" data-b=""></span>';
+// Forest's spinning ring lives in its own scene layer (not in the number's block), so it keeps turning through commander mode
+const forestFx = () => `<i class="ofx" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><span class="halo">${ARCANE}</span></i>`;
 const voidFx = i => {
   const tend = VOID_LAYOUT[i % 4].map(([k, pos, rot, mir, size, org, dur, dir]) =>
     `<svg class="vt" viewBox="0 0 200 200" style="${pos};--h:${size}%;--w:${Math.round(size * 1.2)}%;transform-origin:${org};animation-duration:${dur}s;animation-direction:${dir}">`
     + `<g transform="rotate(${rot} 100 100)${mir ? ' translate(200 0) scale(-1 1)' : ''}">${TEND_SHAPES[k]}</g></svg>`).join('');
-  return `<i class="vfx" aria-hidden="true"><b class="glow"></b>${tend}</i>`;
+  return `<i class="vfx" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s"><b class="glow"></b>${tend}</i>`;
 };
 const studioFx = i => {
   let bars = '';
   for (let k = 0; k < 14; k++) bars += `<b style="animation-duration:${(1.0 + ((k * 7 + i * 3) % 9) / 9).toFixed(2)}s;animation-delay:calc(${(-((k * .37 + i * .21) % 1.6)).toFixed(2)}s - var(--ph))"></b>`;
-  return `<i class="eqfx" aria-hidden="true">${bars}</i><i class="led" aria-hidden="true">${ledHtml(i)}</i>`;
+  return `<i class="eqfx" aria-hidden="true" style="--ph:${(performance.now() / 1000).toFixed(2)}s">${bars}</i>`;
 };
 // read-only "taken so far" tally on your own cell: who has hit you with their commander, and for how much
 const recvHtml = i => {
@@ -1382,12 +1393,14 @@ const alchemyFx = (i, burst) => `<div class="afx${burst}" aria-hidden="true" sty
   + `<svg class="asig" viewBox="0 0 24 24">${PAL[i].sig || ''}</svg><i class="af"></i><i class="ab"></i><i class="asp" style="${ALCH.sparks}"></i></div>`;
 // Luma redraws the board without touching each panel's running neon scene: the panel element and its .lfx stay, everything else
 // in the panel is swapped for the freshly built version. (Used for every full redraw once the scenes exist, e.g. each commander-damage tap.)
+// each theme's running background layer, kept alive when the board is redrawn (see syncBoard)
+const SCENE_OF = { luma:'.lfx', alchemy:'.afx', fire:'.ffx', void:'.vfx', studio:'.eqfx', forest:'.ofx' };
 let panelSig = [];                          // the markup each panel was last drawn from (emptied whenever the board changes some other way)
 function syncBoard(board, html) {
   const tmp = document.createElement('div'); tmp.innerHTML = html;
   board.querySelectorAll('.delta').forEach(d => d.remove());   // paintDeltas() draws the running totals again
   [...board.children].forEach((pn, i) => {
-    const nw = tmp.children[i], fx = pn.querySelector(':scope > .lfx, :scope > .afx, :scope > .ffx'), slot = nw.querySelector(':scope > .lfxslot');
+    const nw = tmp.children[i], fx = pn.querySelector(':scope > .lfx, :scope > .afx, :scope > .ffx, :scope > .vfx, :scope > .eqfx, :scope > .ofx'), slot = nw.querySelector(':scope > .lfxslot');
     const b = slot ? (slot.dataset.b || '').trim() : '', sig = nw.outerHTML;
     if (panelSig[i] === sig && !b) return;                    // this panel would come out exactly the same: don't touch it
     panelSig[i] = sig;
@@ -1402,7 +1415,7 @@ function syncBoard(board, html) {
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
 // ---- version in the settings footer, plus a note when a newer version has downloaded in the background ----
-const APP_VERSION = 'v77';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
+const APP_VERSION = 'v78';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
 function showVersion(ready) {
   const el = document.getElementById('ver'); if (!el) return;
   el.innerHTML = `<i>${APP_VERSION}</i>` + (ready && ready !== APP_VERSION ? ` <i>&middot;</i> <b>${ready} ready, reopen to update</b>` : '');
@@ -1612,8 +1625,8 @@ function render() {
   // negative delay, so changing it under panels that stay in place would make every animation jump ahead on each tap
   document.documentElement.style.setProperty('--ph', (performance.now() / 1000).toFixed(2) + 's');
   // Luma: if every panel already has its neon scene running, the redraw keeps those scenes and swaps only the rest of each panel
-  keepScene = (settings.theme === 'luma' || settings.theme === 'alchemy' || settings.theme === 'fire') && board.children.length === COLORS.length
-    && [...board.children].every(pn => pn.querySelector(settings.theme === 'luma' ? ':scope > .lfx' : settings.theme === 'fire' ? ':scope > .ffx' : ':scope > .afx'));
+  const sceneSel = SCENE_OF[settings.theme];
+  keepScene = !!sceneSel && board.children.length === COLORS.length && [...board.children].every(pn => pn.querySelector(':scope > ' + sceneSel));
   const boardHtml = PAL.map((p, i) => {
     const dead = isDead(i), vac = empty(i);
     const cls = 'panel' + (vac ? ' empty' : '') + (i < 2 ? ' flip' : '') + (dead ? ' dead' : '') + (!dead && s.life[i] <= LOW ? ' low' : '')
@@ -1630,7 +1643,7 @@ function render() {
         <div class="psub">&hearts; ${s.life[i]}</div>
       </div>`;
     } else if (!s.c) {
-      body = `<div class="life">${settings.theme === 'luma' ? '' : `<span class="halo">${ARCANE}</span>`}
+      body = `<div class="life">${settings.theme === 'luma' || settings.theme === 'forest' ? '' : `<span class="halo">${ARCANE}</span>`}
         <button class="big" data-a="life" data-i="${i}" data-d="-1">&minus;</button>
         <div class="num${lifePop}">${s.life[i]}</div>
         <button class="big" data-a="life" data-i="${i}" data-d="1">+</button>
@@ -1669,7 +1682,7 @@ function render() {
       }).join('');
       body = `<div class="seats">${seats}</div>`;
     }
-    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? voidFx(i) : ''}${settings.theme === 'studio' ? studioFx(i) : ''}${settings.theme === 'fire' ? (keepScene ? '<span class="lfxslot" data-b=""></span>' : fireFx(i)) : ''}${settings.theme === 'alchemy' ? (keepScene ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : ''}"></span>` : alchemyFx(i, s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '')) : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
+    return `<div class="${cls}" data-i="${i}" style="--n:${i};--c:${p.c};--d:${p.d};--acc:${p.acc};--rgb:${p.rgb}"><span class="veil"></span><span class="shine"></span>${settings.theme === 'luma' ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' pu' : lifePop.includes('pdn') ? ' pd' : ''}"></span>` : ''}${settings.theme === 'void' ? (keepScene ? SLOT : voidFx(i)) : ''}${settings.theme === 'studio' ? (keepScene ? SLOT : studioFx(i)) + `<i class="led" aria-hidden="true">${ledHtml(i)}</i>` : ''}${settings.theme === 'forest' ? (keepScene ? SLOT : forestFx()) : ''}${settings.theme === 'fire' ? (keepScene ? '<span class="lfxslot" data-b=""></span>' : fireFx(i)) : ''}${settings.theme === 'alchemy' ? (keepScene ? `<span class="lfxslot" data-b="${s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : ''}"></span>` : alchemyFx(i, s.c ? '' : lifePop.includes('pup') ? ' bu' : lifePop.includes('pdn') ? ' bd' : '')) : ''}<span class="spark t">&#10022;</span><span class="spark b">&#10022;</span>${dead ? '<div class="skull">&#9760;</div>' : ''}${champShow && champ === i ? champMarkup() : ''}${body}</div>`;
   }).join('');
   if (keepScene) syncBoard(board, boardHtml); else { board.innerHTML = boardHtml; panelSig = []; } }
   if (settings.theme === 'luma' && !keepScene) fillScene();
@@ -2067,15 +2080,15 @@ const THEMES = {
     { acc:'#b8e05a', rgb:'184,224,90',  c:'#0f2c20', d:'#05130d' },   // moss lime
     { acc:'#4fd8e0', rgb:'79,216,224',  c:'#0f2c20', d:'#05130d' },   // stream teal
     { acc:'#ff74c4', rgb:'255,116,196', c:'#0f2c20', d:'#05130d' } ] }, // wild rose
-  void:   { label:'Void', meta:'#020303', wave:'sine', gain:1.1, pool:[
-    { acc:'#d8e4e8', rgb:'200,215,222', c:'#090b0c', d:'#0a0d0e' },   // pale steel
-    { acc:'#e6e2d2', rgb:'220,214,190', c:'#0c0c09', d:'#0d0d0a' },   // bone
+  void:   { label:'Void', meta:'#020303', wave:'sine', gain:1.1, pool:[      // muted colours, in the same order around the colour wheel as POOL
+    { acc:'#e09a9a', rgb:'224,154,154', c:'#0e0909', d:'#0f0a0a' },   // faded rose
+    { acc:'#9ec0ea', rgb:'158,192,234', c:'#090b0f', d:'#0a0c10' },   // mist blue
+    { acc:'#9ed4b4', rgb:'158,212,180', c:'#090c0a', d:'#0a0d0b' },   // pale jade
+    { acc:'#bcb0ec', rgb:'188,176,236', c:'#0a0910', d:'#0b0a11' },   // dusk violet
     { acc:'#e8b878', rgb:'232,184,120', c:'#0d0a07', d:'#0e0b08' },   // lantern amber
-    { acc:'#b8b2e0', rgb:'184,178,224', c:'#0a0910', d:'#0b0a10' },   // dusk violet
-    { acc:'#d89090', rgb:'216,144,144', c:'#0e0909', d:'#0f0a0a' },   // faded rose
-    { acc:'#a8c8a8', rgb:'168,200,168', c:'#090c09', d:'#0a0d0a' },   // pale moss
-    { acc:'#a8bcd0', rgb:'168,188,208', c:'#090b0e', d:'#0a0c0f' },   // mist blue
-    { acc:'#d0a8bc', rgb:'208,168,188', c:'#0d090b', d:'#0e0a0c' } ] },  // ash pink
+    { acc:'#d2dc9a', rgb:'210,220,154', c:'#0b0c08', d:'#0c0d09' },   // lichen
+    { acc:'#9cd6dc', rgb:'156,214,220', c:'#090c0c', d:'#0a0d0d' },   // pale steel
+    { acc:'#e0a8d2', rgb:'224,168,210', c:'#0d090c', d:'#0e0a0d' } ] },  // ash orchid
   studio: { label:'Studio', meta:'#071113', wave:'sawtooth', gain:.8, pool:[
     { acc:'#39C5BB', rgb:'57,197,187',  c:'#0f2a2c', d:'#081517' },   // studio teal
     { acc:'#ffb454', rgb:'255,180,84',  c:'#2a1f0e', d:'#171007' },   // amber
