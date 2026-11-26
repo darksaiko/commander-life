@@ -1,7 +1,8 @@
 // Commander Life service worker: caches the app so it opens with no internet.
-// When you upload a new version of the app, change VERSION so phones pick it up.
-const VERSION = 'v80';
-const CACHE = 'commander-life-' + VERSION;
+// When you upload a new version of the app, change VERSION (MAJOR.MINOR.PATCH) and BUILD so phones pick it up.
+const VERSION = 'v1.0.0';
+const BUILD = 81;
+const CACHE = 'commander-life-' + VERSION + '-b' + BUILD;
 const DOOM_CACHE = 'commander-doom-v4';   // bump this name whenever the doom/ files change
 const FILES = [
   './',

@@ -1438,7 +1438,8 @@ function syncBoard(board, html) {
 // (Android's nav/status bars sliding in over the fullscreen app). See --appW/--appH in the CSS.
 const appSize = { o:'', w:0, h:0 };
 // ---- version in the settings footer, plus a note when a newer version has downloaded in the background ----
-const APP_VERSION = 'v80';                 // stamped with the release number when the app is packaged (same as VERSION in sw.js)
+const APP_VERSION = 'v1.0.0';                 // release label, MAJOR.MINOR.PATCH (same as VERSION in sw.js): patch = fixes, minor = new feature/theme, major = overhaul
+const APP_BUILD = 81;                       // running package count (same as BUILD in sw.js), shown small in the About card
 function showVersion(ready) {
   const el = document.getElementById('ver'); if (!el) return;
   el.innerHTML = `<i>${APP_VERSION}</i>` + (ready && ready !== APP_VERSION ? ` <i>&middot;</i> <b>${ready} ready, reopen to update</b>` : '');
@@ -2217,7 +2218,7 @@ poisonBtn.addEventListener('click', () => {
 });
 // About card: opens from the settings footer, on top of settings
 const aboutEl = document.getElementById('about');
-function openAbout() { document.getElementById('abVer').textContent = 'Commander Life ' + APP_VERSION; aboutEl.classList.add('open'); aboutEl.setAttribute('aria-hidden', 'false'); }
+function openAbout() { document.getElementById('abVer').textContent = 'Commander Life ' + APP_VERSION + (APP_BUILD ? ' \u00b7 build ' + APP_BUILD : ''); aboutEl.classList.add('open'); aboutEl.setAttribute('aria-hidden', 'false'); }
 function closeAbout() { aboutEl.classList.remove('open'); aboutEl.setAttribute('aria-hidden', 'true'); }
 document.getElementById('abOpen').addEventListener('click', openAbout);
 document.getElementById('abClose').addEventListener('click', closeAbout);
